@@ -1,8 +1,9 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { requireStaff } from '@/lib/auth';
-import { createWood, createFinish, createCollection } from '@/lib/catalog';
+import { createWood, createFinish, createCollection, createProduct, updateProduct, type ProductInput } from '@/lib/catalog';
 import { slugify } from '@/lib/format';
 
 export async function addWoodAction(formData: FormData): Promise<void> {
@@ -27,4 +28,18 @@ export async function addCollectionAction(formData: FormData): Promise<void> {
   const description = String(formData.get('description') ?? '').trim() || null;
   if (name) await createCollection({ slug: slugify(name), name, description });
   revalidatePath('/admin/collections');
+}
+
+export type SaveProductState = { error: string } | null;
+
+export async function saveProductAction(
+  productId: string | null,
+  input: ProductInput,
+): Promise<SaveProductState> {
+  await requireStaff();
+  if (!input.name.trim()) return { error: 'Name is required.' };
+  if (!input.slug.trim()) return { error: 'Slug is required.' };
+  if (productId) await updateProduct(productId, input);
+  else await createProduct(input);
+  redirect('/admin/products');
 }
