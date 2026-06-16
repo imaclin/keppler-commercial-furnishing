@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { getProfile, requireCustomer } from '@/lib/auth';
 import { toggleFavorite, createSampleRequest, updateProfileName } from '@/lib/account';
 
@@ -34,5 +35,8 @@ export async function requestSampleAction(
 export async function updateProfileNameAction(formData: FormData): Promise<void> {
   const profile = await requireCustomer();
   const name = String(formData.get('name') ?? '').trim();
-  if (name) await updateProfileName(profile.id, name);
+  if (name) {
+    await updateProfileName(profile.id, name);
+    revalidatePath('/account', 'layout');
+  }
 }
