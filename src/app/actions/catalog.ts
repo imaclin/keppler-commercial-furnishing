@@ -39,7 +39,15 @@ export async function saveProductAction(
   await requireStaff();
   if (!input.name.trim()) return { error: 'Name is required.' };
   if (!input.slug.trim()) return { error: 'Slug is required.' };
-  if (productId) await updateProduct(productId, input);
-  else await createProduct(input);
+  try {
+    if (productId) await updateProduct(productId, input);
+    else await createProduct(input);
+  } catch (e) {
+    // products.slug is unique; surface a friendly error instead of a 500.
+    if (typeof e === 'object' && e !== null && 'code' in e && (e as { code?: string }).code === '23505') {
+      return { error: 'A product with that slug already exists. Choose a different name or slug.' };
+    }
+    throw e;
+  }
   redirect('/admin/products');
 }
