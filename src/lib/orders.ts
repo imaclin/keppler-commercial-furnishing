@@ -42,6 +42,12 @@ export async function getOrderForAdmin(id: string): Promise<(Order & { customer_
 
 export async function advanceOrderStatus(orderId: string, status: OrderStatus, note: string | null): Promise<void> {
   await transaction(async (client) => {
+    const { rows } = await client.query('select status from orders where id = $1 for update', [orderId]);
+    const current = rows[0]?.status as OrderStatus | undefined;
+    if (!current || current === 'cancelled' || current === 'delivered') {
+      throw new Error('Order is not in an advanceable state');
+    }
+    if (current === status) return; // no-op, avoid duplicate history
     await client.query('update orders set status = $2 where id = $1', [orderId, status]);
     await client.query('insert into order_status_history (order_id, status, note) values ($1, $2, $3)', [orderId, status, note]);
   });

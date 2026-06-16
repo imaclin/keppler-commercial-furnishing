@@ -53,10 +53,15 @@ export async function getQuoteForAdmin(id: string): Promise<(Quote & { customer_
 // Staff: set per-item prices, valid-until, notes, mark sent. prices keyed by quote_item id.
 export async function priceAndSendQuote(quoteId: string, prices: Record<string, number>, validUntil: string | null, notes: string | null): Promise<void> {
   await transaction(async (client) => {
+    const { rows: qrows } = await client.query('select status from quotes where id = $1 for update', [quoteId]);
+    if (!qrows[0] || !['requested', 'sent'].includes(qrows[0].status as string)) {
+      throw new Error('Quote is not in a priceable state');
+    }
     let subtotal = 0;
     const { rows: items } = await client.query('select id, quantity from quote_items where quote_id = $1', [quoteId]);
     for (const it of items) {
-      const unit = prices[it.id as string] ?? 0;
+      const unit = prices[it.id as string];
+      if (unit === undefined) throw new Error('Missing price for a quote item');
       subtotal += unit * (it.quantity as number);
       await client.query('update quote_items set unit_price_cents = $2 where id = $1', [it.id, unit]);
     }
