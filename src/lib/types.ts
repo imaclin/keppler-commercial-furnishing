@@ -35,3 +35,18 @@ export type Product = {
 
 export type ProductImage = { id: string; product_id: string; url: string; type: ImageType; sort_order: number };
 export type ProductSize = { id: string; product_id: string; label: string; seats: number | null; price_delta_cents: number; sort_order: number };
+
+export type StorefrontCard = Product & {
+  image_url: string | null;
+  wood_swatches: string[]; // swatch_color values, for the card dots
+};
+
+export type ConfigOption = { id: string; name: string; swatch_color: string; price_delta_cents: number };
+
+export type StorefrontProduct = Product & {
+  collection_name: string | null;
+  images: ProductImage[];
+  woods: ConfigOption[];
+  finishes: ConfigOption[];
+  sizes: ProductSize[];
+};

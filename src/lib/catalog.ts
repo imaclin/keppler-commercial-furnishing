@@ -1,5 +1,5 @@
 import { query, queryOne, transaction } from '@/lib/db';
-import type { Collection, WoodSpecies, Finish, Product, ProductImage, ProductSize } from '@/lib/types';
+import type { Collection, WoodSpecies, Finish, Product, ProductImage, ProductSize, StorefrontCard, StorefrontProduct, ConfigOption } from '@/lib/types';
 
 // ---------- reference data ----------
 export async function listWoods(): Promise<WoodSpecies[]> {
@@ -120,4 +120,76 @@ export async function catalogCounts(): Promise<{ products: number; published: nu
             (select count(*) from collections)::text as collections`,
   );
   return { products: Number(row?.products ?? 0), published: Number(row?.published ?? 0), collections: Number(row?.collections ?? 0) };
+}
+
+// ---------- storefront read queries ----------
+
+const CARD_SELECT = `
+  select p.*,
+    (select url from product_images i where i.product_id = p.id order by i.sort_order limit 1) as image_url,
+    coalesce(array(
+      select w.swatch_color from product_woods pw join wood_species w on w.id = pw.wood_id
+      where pw.product_id = p.id order by w.sort_order
+    ), '{}') as wood_swatches
+  from products p
+  where p.status = 'published'`;
+
+export async function listPublished(
+  category: 'table' | 'chair' | null,
+  opts: { woodId?: string; sort?: 'featured' | 'price_asc' | 'price_desc' | 'newest' } = {},
+): Promise<StorefrontCard[]> {
+  const params: unknown[] = [];
+  let where = CARD_SELECT;
+  if (category) { params.push(category); where += ` and p.category = $${params.length}`; }
+  if (opts.woodId) {
+    params.push(opts.woodId);
+    where += ` and exists (select 1 from product_woods pw where pw.product_id = p.id and pw.wood_id = $${params.length})`;
+  }
+  const order =
+    opts.sort === 'price_asc' ? 'p.base_price_cents asc' :
+    opts.sort === 'price_desc' ? 'p.base_price_cents desc' :
+    opts.sort === 'newest' ? 'p.created_at desc' :
+    'p.featured desc, p.created_at desc';
+  return query<StorefrontCard>(`${where} order by ${order} limit 100`, params);
+}
+
+export async function listFeatured(limit = 4): Promise<StorefrontCard[]> {
+  return query<StorefrontCard>(`${CARD_SELECT} and p.featured = true order by p.created_at desc limit ${limit}`);
+}
+
+export async function getStorefrontProduct(slug: string): Promise<StorefrontProduct | null> {
+  const product = await queryOne<StorefrontProduct>(
+    `select p.*, c.name as collection_name from products p
+       left join collections c on c.id = p.collection_id
+      where p.slug = $1 and p.status = 'published'`,
+    [slug],
+  );
+  if (!product) return null;
+  const [images, woods, finishes, sizes] = await Promise.all([
+    query<ProductImage>('select * from product_images where product_id = $1 order by sort_order', [product.id]),
+    query<ConfigOption>(
+      `select w.id, w.name, w.swatch_color, pw.price_delta_cents from product_woods pw
+         join wood_species w on w.id = pw.wood_id where pw.product_id = $1 order by w.sort_order`, [product.id]),
+    query<ConfigOption>(
+      `select f.id, f.name, f.swatch_color, pf.price_delta_cents from product_finishes pf
+         join finishes f on f.id = pf.finish_id where pf.product_id = $1 order by f.sort_order`, [product.id]),
+    query<ProductSize>('select * from product_sizes where product_id = $1 order by sort_order', [product.id]),
+  ]);
+  return { ...product, images, woods, finishes, sizes };
+}
+
+export async function getCollectionBySlug(slug: string): Promise<{ id: string; name: string; description: string | null } | null> {
+  return queryOne('select id, name, description from collections where slug = $1', [slug]);
+}
+
+export async function listPublishedByCollection(collectionId: string): Promise<StorefrontCard[]> {
+  return query<StorefrontCard>(`${CARD_SELECT} and p.collection_id = $1 order by p.featured desc, p.created_at desc`, [collectionId]);
+}
+
+export async function searchPublished(q: string): Promise<StorefrontCard[]> {
+  const term = `%${q.trim()}%`;
+  return query<StorefrontCard>(
+    `${CARD_SELECT} and (p.name ilike $1 or p.short_description ilike $1) order by p.featured desc limit 50`,
+    [term],
+  );
 }
