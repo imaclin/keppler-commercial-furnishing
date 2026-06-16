@@ -1,15 +1,25 @@
-import { requireStaff } from '@/lib/auth';
-import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { catalogCounts } from '@/lib/catalog';
 
-export default async function AdminPage() {
-  const profile = await requireStaff();
+export default async function AdminDashboard() {
+  const counts = await catalogCounts();
+  const stats = [
+    { label: 'Products', value: counts.products },
+    { label: 'Published', value: counts.published },
+    { label: 'Collections', value: counts.collections },
+  ];
   return (
-    <main className="mx-auto max-w-[1040px] px-14 py-16">
-      <h1 className="serif text-4xl">HW Admin</h1>
-      <p className="mt-3 text-[var(--stone)]">Signed in as {profile.email} ({profile.role}). Catalog and order tools arrive in Phase 1.</p>
-      <form action="/auth/signout" method="post" className="mt-8">
-        <Button type="submit" variant="outline">Sign out</Button>
-      </form>
+    <main className="p-10">
+      <h1 className="serif text-3xl text-[var(--ink)]">Dashboard</h1>
+      <div className="mt-8 grid max-w-3xl grid-cols-3 gap-5">
+        {stats.map((s) => (
+          <div key={s.label} className="border border-[var(--line)] bg-[var(--paper)] p-6">
+            <div className="eyebrow">{s.label}</div>
+            <div className="serif mt-2 text-4xl text-[var(--ink)]">{s.value}</div>
+          </div>
+        ))}
+      </div>
+      <Link href="/admin/products/new" className="mt-8 inline-block bg-[var(--espresso)] px-5 py-3 text-xs uppercase tracking-[0.14em] text-[#fffdfa]">+ New Product</Link>
     </main>
   );
 }
