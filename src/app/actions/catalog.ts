@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { requireStaff } from '@/lib/auth';
-import { createWood, createFinish, createCollection, listCollections } from '@/lib/catalog';
+import { createWood, createFinish, createCollection } from '@/lib/catalog';
 import { slugify } from '@/lib/format';
 
 export async function addWoodAction(formData: FormData): Promise<void> {
