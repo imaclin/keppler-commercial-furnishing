@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap');
+  :root{--bone:#f7f4ef;--cream:#faf8f5;--paper:#fffdfa;--espresso:#2b2622;--ink:#3a322b;--walnut:#6b4f3a;--stone:#8c8175;--line:#e6ded2;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;color:var(--espresso);background:var(--cream);font-weight:300;-webkit-font-smoothing:antialiased;}
+  .serif{font-family:'Cormorant Garamond',Georgia,serif;}
+  .eyebrow{font-size:11px;letter-spacing:0.28em;text-transform:uppercase;font-weight:500;color:var(--stone);}
+  img{display:block;width:100%;height:100%;object-fit:cover;}
+  .announce{background:var(--espresso);color:#efe7da;text-align:center;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;padding:9px;}
+  header{background:var(--paper);border-bottom:1px solid var(--line);}
+  .navbar{max-width:1320px;margin:0 auto;padding:0 56px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:86px;}
+  .nav-left{display:flex;gap:30px;}.nav-left a,.nav-right a{font-size:12.5px;letter-spacing:0.13em;text-transform:uppercase;color:var(--ink);text-decoration:none;}
+  .brand{text-align:center;}.brand .mark{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:600;letter-spacing:0.18em;color:var(--espresso);line-height:1;}
+  .brand .tag{font-size:8.5px;letter-spacing:0.42em;text-transform:uppercase;color:var(--stone);margin-top:3px;}
+  .nav-right{display:flex;gap:26px;justify-content:flex-end;}
+  .wrap{max-width:1320px;margin:0 auto;padding:0 56px;}
+  .crumb{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--stone);padding:26px 0 0;}
+  .cat-hero{text-align:center;padding:30px 0 30px;}
+  .cat-hero h1{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:500;color:var(--ink);}
+  .cat-hero p{font-size:14px;line-height:1.8;color:var(--stone);max-width:560px;margin:14px auto 0;}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 0;margin-top:8px;}
+  .filters{display:flex;gap:28px;}
+  .filters span{font-size:12px;letter-spacing:0.06em;color:var(--ink);cursor:pointer;}
+  .filters span::after{content:'  ⌄';color:var(--stone);}
+  .count{font-size:12px;color:var(--stone);}
+  .sortby{font-size:12px;letter-spacing:0.06em;color:var(--ink);}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:34px 30px;padding:44px 0 20px;}
+  .card{position:relative;}
+  .heart{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:rgba(255,253,250,0.85);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--stone);z-index:2;}
+  .ph{height:360px;background:var(--bone);overflow:hidden;margin-bottom:18px;}
+  .badge{position:absolute;top:14px;left:14px;background:var(--paper);font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;padding:6px 10px;color:var(--walnut);z-index:2;}
+  .name{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:500;color:var(--ink);}
+  .meta{font-size:12px;color:var(--stone);margin-top:3px;}
+  .swatches{display:flex;gap:6px;margin-top:11px;}
+  .sw{width:15px;height:15px;border-radius:50%;border:1px solid rgba(0,0,0,0.08);}
+  .price{font-size:14px;color:var(--ink);margin-top:11px;}
+  .more{text-align:center;padding:30px 0 80px;}
+  .btn-outline{display:inline-block;border:1px solid var(--espresso);color:var(--espresso);font-size:12px;letter-spacing:0.2em;text-transform:uppercase;padding:16px 40px;text-decoration:none;font-weight:500;}
+  footer{background:var(--espresso);color:#c3b8a6;padding:54px 56px;text-align:center;font-size:12px;letter-spacing:0.1em;}
+  footer .mark{font-family:'Cormorant Garamond',serif;font-size:26px;letter-spacing:0.18em;color:#fffdfa;margin-bottom:14px;}
+</style></head><body>
+  <div class="announce">Complimentary white-glove delivery &nbsp;&middot;&nbsp; Handcrafted to order in America</div>
+  <header><div class="navbar">
+    <nav class="nav-left"><a href="#">Tables</a><a href="#">Chairs</a><a href="#">Collections</a><a href="#">Our Craft</a></nav>
+    <div class="brand"><div class="mark">HW</div><div class="tag">Heirloom Woodwork</div></div>
+    <nav class="nav-right"><a href="#">Search</a><a href="#">Consultation</a><a href="#">Account</a><a href="#">Cart</a></nav>
+  </div></header>
+
+  <div class="wrap">
+    <div class="crumb">Home &nbsp;/&nbsp; Tables</div>
+    <div class="cat-hero">
+      <h1 class="serif">Tables</h1>
+      <p>Solid-wood dining tables, made to order in the species, finish, and proportions you choose. Each one joined by hand to last for generations.</p>
+    </div>
+    <div class="toolbar">
+      <div class="filters"><span>Wood</span><span>Shape</span><span>Seats</span><span>Finish</span><span>Price</span></div>
+      <div class="count">24 pieces</div>
+      <div class="sortby">Sort: Featured &nbsp;⌄</div>
+    </div>
+
+    <div class="grid">
+      <div class="card"><div class="heart">&hearts;</div><span class="badge">Made to Order</span><div class="ph"><img src="img/table.png"></div><div class="name serif">The Homestead</div><div class="meta">Solid oak &middot; trestle</div><div class="swatches"><span class="sw" style="background:#caa472"></span><span class="sw" style="background:#6b4f3a"></span><span class="sw" style="background:#8c8175"></span></div><div class="price">From $3,200</div></div>
+      <div class="card"><div class="heart">&hearts;</div><div class="ph"><img src="img/table2.png"></div><div class="name serif">The Garden Round</div><div class="meta">Solid walnut &middot; pedestal</div><div class="swatches"><span class="sw" style="background:#6b4f3a"></span><span class="sw" style="background:#3a2e24"></span></div><div class="price">From $2,450</div></div>
+      <div class="card"><div class="heart">&hearts;</div><span class="badge">New</span><div class="ph"><img src="img/table3.png"></div><div class="name serif">The Riverbend</div><div class="meta">Live-edge walnut</div><div class="swatches"><span class="sw" style="background:#5a4030"></span><span class="sw" style="background:#6b4f3a"></span></div><div class="price">From $4,800</div></div>
+      <div class="card"><div class="heart">&hearts;</div><div class="ph"><img src="img/table4.png"></div><div class="name serif">The Lancaster Farm</div><div class="meta">Solid oak &middot; turned leg</div><div class="swatches"><span class="sw" style="background:#caa472"></span><span class="sw" style="background:#b8956a"></span><span class="sw" style="background:#6b4f3a"></span></div><div class="price">From $2,900</div></div>
+      <div class="card"><div class="heart">&hearts;</div><div class="ph"><img src="img/table5.png"></div><div class="name serif">The Orchard</div><div class="meta">Solid cherry &middot; extension</div><div class="swatches"><span class="sw" style="background:#8a4b34"></span><span class="sw" style="background:#6b4f3a"></span></div><div class="price">From $3,650</div></div>
+      <div class="card"><div class="heart">&hearts;</div><span class="badge">Made to Order</span><div class="ph"><img src="img/room.png"></div><div class="name serif">The Keeping Room</div><div class="meta">Solid maple &middot; round</div><div class="swatches"><span class="sw" style="background:#d8c19a"></span><span class="sw" style="background:#caa472"></span></div><div class="price">From $2,250</div></div>
+    </div>
+    <div class="more"><a href="#" class="btn-outline">Load More</a></div>
+  </div>
+  <footer><div class="mark">HW</div>Heirloom Woodwork, LLC &nbsp;&middot;&nbsp; Handcrafted in America</footer>
+</body></html>
