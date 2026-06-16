@@ -50,3 +50,13 @@ export type StorefrontProduct = Product & {
   finishes: ConfigOption[];
   sizes: ProductSize[];
 };
+
+export type SampleRequestRow = {
+  id: string;
+  product_id: string | null;
+  product_name: string | null;
+  wood_name: string | null;
+  finish_name: string | null;
+  status: 'requested' | 'shipped' | 'delivered';
+  created_at: string;
+};
