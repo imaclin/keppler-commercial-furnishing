@@ -14,7 +14,7 @@ export function ProductCard({ product }: { product: StorefrontCard }) {
       <h3 className="serif mt-4 text-xl text-[var(--ink)]">{product.name}</h3>
       {product.wood_swatches.length > 0 && (
         <div className="mt-2 flex gap-1.5">
-          {product.wood_swatches.map((c, i) => <span key={i} className="h-3.5 w-3.5 rounded-full border border-black/10" style={{ background: c }} />)}
+          {product.wood_swatches.map((c) => <span key={c} className="h-3.5 w-3.5 rounded-full border border-black/10" style={{ background: c }} />)}
         </div>
       )}
       <p className="mt-2 text-sm text-[var(--ink)]">From {formatPriceCents(product.base_price_cents)}</p>

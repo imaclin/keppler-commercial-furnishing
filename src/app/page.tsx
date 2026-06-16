@@ -4,6 +4,8 @@ import { Footer } from '@/components/Footer';
 import { ProductCard } from '@/components/storefront/ProductCard';
 import { listFeatured } from '@/lib/catalog';
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   const featured = await listFeatured(4);
   return (
@@ -188,14 +190,14 @@ export default async function HomePage() {
           <p className="mx-auto mb-[26px] mt-3 text-[13px] tracking-[0.03em] text-[var(--stone)]">
             New collections, the stories behind them, and the occasional look inside the shop.
           </p>
-          <div className="mx-auto inline-flex w-full max-w-[420px] border-b border-[var(--ink)]">
+          <form className="mx-auto inline-flex w-full max-w-[420px] border-b border-[var(--ink)]">
             <input
               type="email"
               placeholder="Email address"
               className="flex-1 border-none bg-transparent px-1 py-3 text-[14px] text-[var(--ink)] outline-none"
             />
-            <span className="py-3 px-[6px] text-[18px] text-[var(--ink)]">&rarr;</span>
-          </div>
+            <button type="submit" className="border-none bg-transparent py-3 px-[6px] text-[18px] text-[var(--ink)] cursor-pointer">&rarr;</button>
+          </form>
         </section>
       </main>
 

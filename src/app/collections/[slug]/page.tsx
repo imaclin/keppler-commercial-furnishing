@@ -4,6 +4,8 @@ import { Footer } from '@/components/Footer';
 import { ProductCard } from '@/components/storefront/ProductCard';
 import { getCollectionBySlug, listPublishedByCollection } from '@/lib/catalog';
 
+export const dynamic = 'force-dynamic';
+
 export default async function CollectionPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const collection = await getCollectionBySlug(slug);

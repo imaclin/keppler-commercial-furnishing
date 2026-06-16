@@ -15,6 +15,8 @@ export function CategoryView({
   const [items, setItems] = useState<StorefrontCard[]>(initial);
 
   useEffect(() => {
+    // initial props already match these defaults; skip the redundant first-mount fetch
+    if (woodId === '' && sort === 'featured') return;
     getCategoryProductsAction(category, woodId || undefined, sort).then(setItems).catch(() => {});
   }, [category, woodId, sort]);
 

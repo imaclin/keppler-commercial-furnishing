@@ -3,6 +3,8 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { listCollections } from '@/lib/catalog';
 
+export const dynamic = 'force-dynamic';
+
 export default async function CollectionsPage() {
   const collections = await listCollections();
   return (
