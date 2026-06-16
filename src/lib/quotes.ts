@@ -61,7 +61,7 @@ export async function priceAndSendQuote(quoteId: string, prices: Record<string, 
     const { rows: items } = await client.query('select id, quantity from quote_items where quote_id = $1', [quoteId]);
     for (const it of items) {
       const unit = prices[it.id as string];
-      if (unit === undefined) throw new Error('Missing price for a quote item');
+      if (unit === undefined || !Number.isFinite(unit) || unit < 0) throw new Error('Invalid price for a quote item');
       subtotal += unit * (it.quantity as number);
       await client.query('update quote_items set unit_price_cents = $2 where id = $1', [it.id, unit]);
     }

@@ -31,6 +31,7 @@ export function OrderStatusForm({ orderId, currentStatus, estDelivery }: Props) 
   const [deliveryDate, setDeliveryDate] = useState(estDelivery ?? '');
   const [dateBusy, setDateBusy] = useState(false);
   const [dateSaved, setDateSaved] = useState(false);
+  const [dateError, setDateError] = useState<string | null>(null);
 
   async function handleStatusSave(e: React.FormEvent) {
     e.preventDefault();
@@ -50,10 +51,16 @@ export function OrderStatusForm({ orderId, currentStatus, estDelivery }: Props) 
   async function handleDateSave(e: React.FormEvent) {
     e.preventDefault();
     setDateSaved(false);
+    setDateError(null);
     setDateBusy(true);
-    await setEstDeliveryAction(orderId, deliveryDate);
-    setDateBusy(false);
-    setDateSaved(true);
+    try {
+      await setEstDeliveryAction(orderId, deliveryDate);
+      setDateSaved(true);
+    } catch {
+      setDateError('Could not save the delivery date.');
+    } finally {
+      setDateBusy(false);
+    }
   }
 
   return (
@@ -113,6 +120,7 @@ export function OrderStatusForm({ orderId, currentStatus, estDelivery }: Props) 
           </Button>
         </div>
         {dateSaved && <p className="text-sm text-[var(--walnut)]">Delivery date updated.</p>}
+        {dateError && <p className="text-sm text-red-600">{dateError}</p>}
       </form>
     </div>
   );

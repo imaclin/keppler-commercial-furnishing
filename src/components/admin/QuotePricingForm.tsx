@@ -35,12 +35,16 @@ export function QuotePricingForm({ quoteId, status, items, initialValidUntil, in
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setBusy(true);
     const priceMap: Record<string, number> = {};
     for (const item of items) {
-      const raw = parseFloat(prices[item.id] ?? '0');
-      priceMap[item.id] = isNaN(raw) ? 0 : Math.round(raw * 100);
+      const raw = parseFloat(prices[item.id] ?? '');
+      if (isNaN(raw) || raw < 0) {
+        setError(`Enter a valid price for "${item.title_snapshot}".`);
+        return;
+      }
+      priceMap[item.id] = Math.round(raw * 100);
     }
+    setBusy(true);
     const result = await sendQuoteAction(quoteId, priceMap, validUntil || null, notes.trim() || null);
     setBusy(false);
     if ('error' in result) {
