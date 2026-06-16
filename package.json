@@ -8,7 +8,7 @@
     "start": "next start",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:reset": "psql -d hw -v ON_ERROR_STOP=1 -f db/reset.sql -f db/migrations/0001_auth.sql -f db/migrations/0002_seed.sql -f db/migrations/0003_catalog.sql -f db/migrations/0004_catalog_seed.sql -f db/migrations/0005_demo_catalog.sql"
+    "db:reset": "psql -d hw -v ON_ERROR_STOP=1 -f db/reset.sql -f db/migrations/0001_auth.sql -f db/migrations/0002_seed.sql -f db/migrations/0003_catalog.sql -f db/migrations/0004_catalog_seed.sql -f db/migrations/0005_demo_catalog.sql -f db/migrations/0006_inquiries.sql"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
