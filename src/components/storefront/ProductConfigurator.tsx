@@ -8,7 +8,7 @@ import { FavoriteButton } from '@/components/storefront/FavoriteButton';
 import { SampleRequestForm } from '@/components/storefront/SampleRequestForm';
 import type { StorefrontProduct } from '@/lib/types';
 
-export function ProductConfigurator({ product, initialFavorited }: { product: StorefrontProduct; initialFavorited: boolean }) {
+export function ProductConfigurator({ product, initialFavorited, isLoggedIn = false }: { product: StorefrontProduct; initialFavorited: boolean; isLoggedIn?: boolean }) {
   const [activeImg, setActiveImg] = useState(product.images[0]?.url ?? null);
   const [woodId, setWoodId] = useState(product.woods[0]?.id ?? '');
   const [finishId, setFinishId] = useState(product.finishes[0]?.id ?? '');
@@ -26,6 +26,15 @@ export function ProductConfigurator({ product, initialFavorited }: { product: St
   const configuration = {
     product: product.name, wood: wood?.name ?? null, finish: finish?.name ?? null,
     size: size?.label ?? null, price: formatPriceCents(price),
+  };
+  const quoteItem = {
+    productId: product.id,
+    title: product.name,
+    woodName: wood?.name ?? null,
+    finishName: finish?.name ?? null,
+    sizeLabel: size?.label ?? null,
+    unitPriceCents: price,
+    configuration,
   };
 
   return (
@@ -90,7 +99,7 @@ export function ProductConfigurator({ product, initialFavorited }: { product: St
         )}
 
         <div className="mt-8 space-y-3">
-          <QuoteRequestForm productId={product.id} configuration={configuration} />
+          <QuoteRequestForm productId={product.id} configuration={configuration} isLoggedIn={isLoggedIn} quoteItem={quoteItem} />
           <FavoriteButton productId={product.id} initialFavorited={initialFavorited} />
         </div>
         <SampleRequestForm productId={product.id} woodId={woodId || null} finishId={finishId || null} />

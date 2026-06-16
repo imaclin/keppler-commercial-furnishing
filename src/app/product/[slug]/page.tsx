@@ -34,7 +34,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <div className="mb-6 text-[11px] uppercase tracking-[0.12em] text-[var(--stone)]">
           <Link href="/">Home</Link> / <Link href={`/${product.category}s`} className="capitalize">{product.category}s</Link> / {product.name}
         </div>
-        <ProductConfigurator product={product} initialFavorited={initialFavorited} />
+        <ProductConfigurator product={product} initialFavorited={initialFavorited} isLoggedIn={profile !== null} />
         {related.length > 0 && (
           <section className="mt-24">
             <h2 className="serif mb-10 text-center text-3xl text-[var(--ink)]">Complete the Room</h2>
