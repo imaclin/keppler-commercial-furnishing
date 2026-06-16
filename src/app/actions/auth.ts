@@ -35,6 +35,9 @@ export async function registerAction(_prev: ActionState, formData: FormData): Pr
     if (e instanceof Error && e.message === 'email_taken') {
       return { error: 'An account with that email already exists.' };
     }
+    if (typeof e === 'object' && e !== null && 'code' in e && (e as { code?: string }).code === '23505') {
+      return { error: 'An account with that email already exists.' };
+    }
     return { error: 'Could not create your account. Please try again.' };
   }
   await createSession(userId);
@@ -45,10 +48,14 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
   const email = String(formData.get('email') ?? '').trim().toLowerCase();
   const password = String(formData.get('password') ?? '');
   if (!email || !password) return { error: 'Email and password are required.' };
-  const user = await queryOne<User>('select * from users where email = $1', [email]);
-  if (!user || !(await bcrypt.compare(password, user.password_hash))) {
-    return { error: 'Invalid email or password.' };
+  try {
+    const user = await queryOne<User>('select id, password_hash from users where email = $1', [email]);
+    if (!user || !(await bcrypt.compare(password, user.password_hash))) {
+      return { error: 'Invalid email or password.' };
+    }
+    await createSession(user.id);
+  } catch {
+    return { error: 'Something went wrong. Please try again.' };
   }
-  await createSession(user.id);
   redirect('/account');
 }

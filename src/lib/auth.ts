@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { createHash } from 'crypto';
 import { query, queryOne } from '@/lib/db';
 import type { Profile } from '@/lib/types';
 
@@ -12,11 +13,15 @@ function randomToken(): string {
   return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
+function hashToken(token: string): string {
+  return createHash('sha256').update(token).digest('hex');
+}
+
 export async function createSession(userId: string): Promise<void> {
   const token = randomToken();
   const expires = new Date(Date.now() + SESSION_DAYS * 86_400_000);
   await query('insert into sessions (token, user_id, expires_at) values ($1, $2, $3)', [
-    token, userId, expires.toISOString(),
+    hashToken(token), userId, expires.toISOString(),
   ]);
   const store = await cookies();
   store.set(COOKIE, token, {
@@ -24,11 +29,12 @@ export async function createSession(userId: string): Promise<void> {
   });
 }
 
+// Intentionally idempotent: no-op when no cookie is present.
 export async function destroySession(): Promise<void> {
   const store = await cookies();
   const token = store.get(COOKIE)?.value;
   if (token) {
-    await query('delete from sessions where token = $1', [token]);
+    await query('delete from sessions where token = $1', [hashToken(token)]);
     store.delete(COOKIE);
   }
 }
@@ -40,7 +46,7 @@ export async function getProfile(): Promise<Profile | null> {
   return queryOne<Profile>(
     `select p.* from sessions s join profiles p on p.id = s.user_id
       where s.token = $1 and s.expires_at > now()`,
-    [token],
+    [hashToken(token)],
   );
 }
 
