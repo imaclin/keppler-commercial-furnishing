@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Header } from '@/components/Header';
@@ -5,6 +6,16 @@ import { Footer } from '@/components/Footer';
 import { ProductConfigurator } from '@/components/storefront/ProductConfigurator';
 import { ProductCard } from '@/components/storefront/ProductCard';
 import { getStorefrontProduct, listPublished } from '@/lib/catalog';
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await getStorefrontProduct(slug);
+  if (!product) return { title: 'Not found | HW' };
+  return {
+    title: `${product.name} | HW`,
+    description: product.short_description ?? 'Handcrafted American solid-wood furniture.',
+  };
+}
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

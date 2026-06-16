@@ -11,7 +11,13 @@ export async function requestQuoteAction(
   const name = data.name.trim();
   const email = data.email.trim();
   if (!name || !email) return { error: 'Name and email are required.' };
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return { error: 'Enter a valid email.' };
-  await createInquiry({ productId, name, email, message: data.message.trim() || null, configuration: data.configuration });
+  if (name.length > 200) return { error: 'That name is too long.' };
+  if (email.length > 254 || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return { error: 'Enter a valid email.' };
+  const message = data.message.trim().slice(0, 4000) || null;
+  try {
+    await createInquiry({ productId, name, email, message, configuration: data.configuration });
+  } catch {
+    return { error: 'Something went wrong. Please try again.' };
+  }
   return { ok: true };
 }
