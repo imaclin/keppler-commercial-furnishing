@@ -6,6 +6,8 @@ import { Footer } from '@/components/Footer';
 import { ProductConfigurator } from '@/components/storefront/ProductConfigurator';
 import { ProductCard } from '@/components/storefront/ProductCard';
 import { getStorefrontProduct, listPublished } from '@/lib/catalog';
+import { getProfile } from '@/lib/auth';
+import { isFavorited } from '@/lib/account';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -22,6 +24,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const product = await getStorefrontProduct(slug);
   if (!product) notFound();
   const related = (await listPublished(product.category, {})).filter((p) => p.id !== product.id).slice(0, 4);
+  const profile = await getProfile();
+  const initialFavorited = profile ? await isFavorited(profile.id, product.id) : false;
 
   return (
     <>
@@ -30,7 +34,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <div className="mb-6 text-[11px] uppercase tracking-[0.12em] text-[var(--stone)]">
           <Link href="/">Home</Link> / <Link href={`/${product.category}s`} className="capitalize">{product.category}s</Link> / {product.name}
         </div>
-        <ProductConfigurator product={product} />
+        <ProductConfigurator product={product} initialFavorited={initialFavorited} />
         {related.length > 0 && (
           <section className="mt-24">
             <h2 className="serif mb-10 text-center text-3xl text-[var(--ink)]">Complete the Room</h2>

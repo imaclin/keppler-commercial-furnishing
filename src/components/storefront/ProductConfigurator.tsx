@@ -4,9 +4,11 @@ import { useState } from 'react';
 import { computeConfiguredPriceCents } from '@/lib/pricing';
 import { formatPriceCents } from '@/lib/format';
 import { QuoteRequestForm } from '@/components/storefront/QuoteRequestForm';
+import { FavoriteButton } from '@/components/storefront/FavoriteButton';
+import { SampleRequestForm } from '@/components/storefront/SampleRequestForm';
 import type { StorefrontProduct } from '@/lib/types';
 
-export function ProductConfigurator({ product }: { product: StorefrontProduct }) {
+export function ProductConfigurator({ product, initialFavorited }: { product: StorefrontProduct; initialFavorited: boolean }) {
   const [activeImg, setActiveImg] = useState(product.images[0]?.url ?? null);
   const [woodId, setWoodId] = useState(product.woods[0]?.id ?? '');
   const [finishId, setFinishId] = useState(product.finishes[0]?.id ?? '');
@@ -87,8 +89,11 @@ export function ProductConfigurator({ product }: { product: StorefrontProduct })
           </Field>
         )}
 
-        <div className="mt-8"><QuoteRequestForm productId={product.id} configuration={configuration} /></div>
-        <p className="mt-4 text-sm text-[var(--walnut)]">Order a wood and finish sample . $5, credited to your order</p>
+        <div className="mt-8 space-y-3">
+          <QuoteRequestForm productId={product.id} configuration={configuration} />
+          <FavoriteButton productId={product.id} initialFavorited={initialFavorited} />
+        </div>
+        <SampleRequestForm productId={product.id} woodId={woodId} finishId={finishId} />
         {product.story && <p className="mt-8 border-t border-[var(--line)] pt-6 text-sm leading-relaxed text-[var(--ink)]">{product.story}</p>}
       </div>
     </div>
