@@ -5,5 +5,5 @@ import { Button } from '@/components/ui/button';
 
 export function QuoteAcceptButton({ quoteId }: { quoteId: string }) {
   const [busy, setBusy] = useState(false);
-  return <Button disabled={busy} onClick={() => { setBusy(true); acceptQuoteAction(quoteId); }}>{busy ? 'Accepting...' : 'Accept quote'}</Button>;
+  return <Button disabled={busy} onClick={async () => { setBusy(true); await acceptQuoteAction(quoteId); }}>{busy ? 'Accepting...' : 'Accept quote'}</Button>;
 }

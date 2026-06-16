@@ -10,13 +10,16 @@ export function MessageThread({ messages }: { messages: Message[] }) {
   const router = useRouter();
   const [body, setBody] = useState('');
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   useEffect(() => { markCustomerReadAction(); }, []);
   async function send() {
     if (!body.trim() || busy) return;
+    setError(null);
     setBusy(true);
     const res = await sendCustomerMessageAction(body);
     setBusy(false);
     if ('ok' in res) { setBody(''); router.refresh(); }
+    else if ('error' in res) { setError(res.error); }
   }
   return (
     <div className="max-w-2xl">
@@ -32,6 +35,7 @@ export function MessageThread({ messages }: { messages: Message[] }) {
         <Textarea value={body} onChange={(e) => setBody(e.target.value)} rows={2} placeholder="Write a message..." />
         <Button onClick={send} disabled={busy}>Send</Button>
       </div>
+      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
     </div>
   );
 }

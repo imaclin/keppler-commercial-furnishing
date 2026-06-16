@@ -14,7 +14,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
     <main className="p-10">
       <div className="text-[8px] uppercase tracking-[0.4em] text-[var(--stone)]">Order</div>
       <h1 className="serif mt-1 text-4xl text-[var(--ink)]">
-        <span className="rounded bg-[var(--bone)] px-2 py-1 text-base capitalize">{order.status.replace('_', ' ')}</span>
+        <span className="rounded bg-[var(--bone)] px-2 py-1 text-base capitalize">{order.status.replaceAll('_', ' ')}</span>
       </h1>
       <p className="mt-1 text-sm text-[var(--stone)]">Placed {new Date(order.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
 
@@ -57,7 +57,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                   {new Date(event.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </div>
                 <div>
-                  <span className="rounded bg-[var(--bone)] px-2 py-0.5 text-[11px] uppercase tracking-[0.12em] text-[var(--ink)] capitalize">{event.status.replace('_', ' ')}</span>
+                  <span className="rounded bg-[var(--bone)] px-2 py-0.5 text-[11px] uppercase tracking-[0.12em] text-[var(--ink)] capitalize">{event.status.replaceAll('_', ' ')}</span>
                   {event.note && <p className="mt-1 text-sm text-[var(--stone)]">{event.note}</p>}
                 </div>
               </div>

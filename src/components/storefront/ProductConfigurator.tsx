@@ -99,7 +99,7 @@ export function ProductConfigurator({ product, initialFavorited, isLoggedIn = fa
         )}
 
         <div className="mt-8 space-y-3">
-          <QuoteRequestForm productId={product.id} configuration={configuration} isLoggedIn={isLoggedIn} quoteItem={quoteItem} />
+          <QuoteRequestForm key={`${woodId}-${finishId}-${sizeId}`} productId={product.id} configuration={configuration} isLoggedIn={isLoggedIn} quoteItem={quoteItem} />
           <FavoriteButton productId={product.id} initialFavorited={initialFavorited} />
         </div>
         <SampleRequestForm productId={product.id} woodId={woodId || null} finishId={finishId || null} />

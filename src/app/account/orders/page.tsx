@@ -17,7 +17,7 @@ export default async function OrdersPage() {
           {orders.map((o) => (
             <Link key={o.id} href={`/account/orders/${o.id}`} className="flex items-center justify-between border border-[var(--line)] bg-[var(--paper)] p-4 hover:border-[var(--walnut)]">
               <div className="flex items-center gap-4">
-                <span className="rounded bg-[var(--bone)] px-2 py-1 text-[11px] uppercase tracking-[0.12em] text-[var(--ink)] capitalize">{o.status.replace('_', ' ')}</span>
+                <span className="rounded bg-[var(--bone)] px-2 py-1 text-[11px] uppercase tracking-[0.12em] text-[var(--ink)] capitalize">{o.status.replaceAll('_', ' ')}</span>
                 <span className="text-sm text-[var(--stone)]">{new Date(o.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
               </div>
               <div className="flex items-center gap-4">

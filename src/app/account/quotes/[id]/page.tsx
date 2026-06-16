@@ -14,7 +14,7 @@ export default async function QuoteDetailPage({ params }: { params: Promise<{ id
     <main className="p-10">
       <div className="text-[8px] uppercase tracking-[0.4em] text-[var(--stone)]">Quote</div>
       <h1 className="serif mt-1 text-4xl text-[var(--ink)]">
-        <span className="rounded bg-[var(--bone)] px-2 py-1 text-base capitalize">{quote.status.replace('_', ' ')}</span>
+        <span className="rounded bg-[var(--bone)] px-2 py-1 text-base capitalize">{quote.status.replaceAll('_', ' ')}</span>
       </h1>
       <p className="mt-1 text-sm text-[var(--stone)]">Requested {new Date(quote.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
 
