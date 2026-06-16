@@ -5,8 +5,11 @@ import { usePathname } from 'next/navigation';
 
 const NAV = [
   { href: '/account', label: 'Dashboard' },
+  { href: '/account/orders', label: 'Orders' },
+  { href: '/account/quotes', label: 'Quotes' },
   { href: '/account/favorites', label: 'Favorites' },
   { href: '/account/samples', label: 'Wood Samples' },
+  { href: '/account/messages', label: 'Messages' },
   { href: '/account/profile', label: 'Profile' },
 ];
 
