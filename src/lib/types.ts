@@ -60,3 +60,23 @@ export type SampleRequestRow = {
   status: 'requested' | 'shipped' | 'delivered';
   created_at: string;
 };
+
+export type QuoteStatus = 'requested' | 'sent' | 'accepted' | 'declined' | 'expired';
+export type OrderStatus = 'confirmed' | 'in_production' | 'shipping' | 'delivered' | 'cancelled';
+
+export type QuoteItem = {
+  id: string; quote_id: string; product_id: string | null; title_snapshot: string;
+  wood_name: string | null; finish_name: string | null; size_label: string | null;
+  quantity: number; unit_price_cents: number; configuration_json: Record<string, unknown> | null;
+};
+export type Quote = {
+  id: string; customer_id: string; status: QuoteStatus; subtotal_cents: number; total_cents: number;
+  valid_until: string | null; notes: string | null; created_at: string;
+};
+export type OrderItem = Omit<QuoteItem, 'quote_id'> & { order_id: string };
+export type Order = {
+  id: string; customer_id: string; quote_id: string | null; status: OrderStatus;
+  subtotal_cents: number; total_cents: number; est_delivery_date: string | null; created_at: string;
+};
+export type OrderStatusEvent = { id: string; order_id: string; status: string; note: string | null; created_at: string };
+export type Message = { id: string; customer_id: string; sender: 'customer' | 'staff'; body: string; read_at: string | null; created_at: string };
