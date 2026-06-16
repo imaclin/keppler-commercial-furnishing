@@ -20,7 +20,10 @@ export async function listCollections(): Promise<Collection[]> {
   return query<Collection>('select * from collections order by sort_order, name');
 }
 export async function createCollection(args: { slug: string; name: string; description: string | null }): Promise<void> {
-  await query('insert into collections (slug, name, description) values ($1, $2, $3)', [args.slug, args.name, args.description]);
+  await query(
+    'insert into collections (slug, name, description) values ($1, $2, $3) on conflict (slug) do nothing',
+    [args.slug, args.name, args.description],
+  );
 }
 
 // ---------- products ----------
