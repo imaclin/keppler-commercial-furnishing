@@ -93,7 +93,7 @@ export function ProductConfigurator({ product, initialFavorited }: { product: St
           <QuoteRequestForm productId={product.id} configuration={configuration} />
           <FavoriteButton productId={product.id} initialFavorited={initialFavorited} />
         </div>
-        <SampleRequestForm productId={product.id} woodId={woodId} finishId={finishId} />
+        <SampleRequestForm productId={product.id} woodId={woodId || null} finishId={finishId || null} />
         {product.story && <p className="mt-8 border-t border-[var(--line)] pt-6 text-sm leading-relaxed text-[var(--ink)]">{product.story}</p>}
       </div>
     </div>
