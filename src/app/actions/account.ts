@@ -3,13 +3,17 @@
 import { getProfile, requireCustomer } from '@/lib/auth';
 import { toggleFavorite, createSampleRequest, updateProfileName } from '@/lib/account';
 
-export type FavoriteResult = { favorited: boolean } | { needsAuth: true };
+export type FavoriteResult = { favorited: boolean } | { needsAuth: true } | { error: string };
 
 export async function toggleFavoriteAction(productId: string): Promise<FavoriteResult> {
   const profile = await getProfile();
   if (!profile) return { needsAuth: true };
-  const favorited = await toggleFavorite(profile.id, productId);
-  return { favorited };
+  try {
+    const favorited = await toggleFavorite(profile.id, productId);
+    return { favorited };
+  } catch {
+    return { error: 'Could not update favorites. Please try again.' };
+  }
 }
 
 export type SampleResult = { ok: true } | { needsAuth: true } | { error: string };

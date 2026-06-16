@@ -32,6 +32,16 @@ export async function listFavorites(userId: string): Promise<StorefrontCard[]> {
 export async function createSampleRequest(args: {
   userId: string; productId: string | null; woodId: string | null; finishId: string | null;
 }): Promise<void> {
+  const existing = await queryOne<{ one: number }>(
+    `select 1 as one from sample_requests
+      where user_id = $1
+        and product_id is not distinct from $2
+        and wood_id is not distinct from $3
+        and finish_id is not distinct from $4
+        and status = 'requested'`,
+    [args.userId, args.productId, args.woodId, args.finishId],
+  );
+  if (existing) return; // identical un-shipped request already exists
   await query(
     'insert into sample_requests (user_id, product_id, wood_id, finish_id) values ($1, $2, $3, $4)',
     [args.userId, args.productId, args.woodId, args.finishId],
