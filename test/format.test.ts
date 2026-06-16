@@ -8,6 +8,9 @@ describe('slugify', () => {
   it('strips punctuation and collapses spaces', () => {
     expect(slugify('Lancaster Chair (Walnut)!')).toBe('lancaster-chair-walnut');
   });
+  it('strips leading and trailing hyphens', () => {
+    expect(slugify('!!! Lancaster !!!')).toBe('lancaster');
+  });
 });
 
 describe('formatPriceCents', () => {
