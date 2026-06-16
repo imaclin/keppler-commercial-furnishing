@@ -24,7 +24,7 @@ export function Footer() {
         ))}
       </div>
       <div className="mx-auto mt-12 max-w-[1320px] border-t border-white/10 pt-6 text-[11px] tracking-[0.06em] text-[#9a8e7c]">
-        &copy; 2026 HW, Heirloom Woodwork, LLC
+        &copy; {new Date().getFullYear()} HW, Heirloom Woodwork, LLC
       </div>
     </footer>
   );

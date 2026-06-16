@@ -1,4 +1,5 @@
 import { requireStaff } from '@/lib/auth';
+import { Button } from '@/components/ui/button';
 
 export default async function AdminPage() {
   const profile = await requireStaff();
@@ -7,7 +8,7 @@ export default async function AdminPage() {
       <h1 className="serif text-4xl">HW Admin</h1>
       <p className="mt-3 text-[var(--stone)]">Signed in as {profile.email} ({profile.role}). Catalog and order tools arrive in Phase 1.</p>
       <form action="/auth/signout" method="post" className="mt-8">
-        <button type="submit" className="text-sm underline">Sign out</button>
+        <Button type="submit" variant="outline">Sign out</Button>
       </form>
     </main>
   );

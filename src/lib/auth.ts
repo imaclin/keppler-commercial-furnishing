@@ -50,6 +50,8 @@ export async function getProfile(): Promise<Profile | null> {
   );
 }
 
+// Requires a signed-in account. Any role (customer or staff) may access their own
+// account area; this gates authentication, not the customer role specifically.
 export async function requireCustomer(): Promise<Profile> {
   const profile = await getProfile();
   if (!profile) redirect('/login');
