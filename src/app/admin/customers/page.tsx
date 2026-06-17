@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { listCustomers } from '@/lib/customers';
 import { formatPriceCents, timeAgo } from '@/lib/format';
+import { RowLink } from '@/components/admin/RowLink';
 
 export default async function AdminCustomersPage({
   searchParams,
@@ -58,25 +59,19 @@ export default async function AdminCustomersPage({
               </tr>
             )}
             {customers.map((c) => (
-              <tr
+              <RowLink
                 key={c.id}
+                href={`/admin/customers/${c.id}`}
                 className="border-b border-[var(--line)] last:border-0 hover:bg-[var(--cream)]"
               >
-                <td className="p-4">
-                  <Link
-                    href={`/admin/customers/${c.id}`}
-                    className="font-medium text-[var(--ink)] hover:underline"
-                  >
-                    {c.name}
-                  </Link>
-                </td>
+                <td className="p-4 font-medium text-[var(--ink)]">{c.name}</td>
                 <td className="p-4 text-[var(--stone)]">{c.email}</td>
                 <td className="p-4 text-[var(--stone)]">{c.orders}</td>
                 <td className="p-4 text-[var(--ink)]">{formatPriceCents(c.ltv_cents)}</td>
                 <td className="p-4 text-[var(--stone)]">
                   {c.last_at ? timeAgo(c.last_at) : 'No orders'}
                 </td>
-              </tr>
+              </RowLink>
             ))}
           </tbody>
         </table>

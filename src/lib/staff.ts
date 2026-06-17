@@ -30,6 +30,15 @@ export async function createStaffMember(args: { email: string; name: string; pas
   });
 }
 
+export async function getStaffMember(id: string): Promise<StaffMember | null> {
+  return queryOne<StaffMember>(
+    `select pr.id, pr.name, u.email, pr.role, u.created_at
+       from profiles pr join users u on u.id = pr.id
+       where pr.id = $1 and pr.role in ('staff','admin')`,
+    [id],
+  );
+}
+
 export async function setStaffRole(userId: string, role: 'customer' | 'staff' | 'admin'): Promise<void> {
   await query('update profiles set role = $2 where id = $1', [userId, role]);
 }

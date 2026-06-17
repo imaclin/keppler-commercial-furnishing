@@ -134,7 +134,11 @@ export function StaffManager({ staff, invites, currentUserId }: { staff: StaffMe
           </thead>
           <tbody>
             {staff.map((s) => (
-              <tr key={s.id} className="border-b border-[var(--line)]">
+              <tr
+                key={s.id}
+                onClick={() => router.push(`/admin/staff/${s.id}`)}
+                className="cursor-pointer border-b border-[var(--line)] hover:bg-[var(--bone)]/50"
+              >
                 <td className="py-3 font-medium text-[var(--ink)]">
                   {s.name}{s.id === currentUserId && <span className="ml-2 text-[11px] text-[var(--stone)]">(you)</span>}
                 </td>
@@ -144,6 +148,7 @@ export function StaffManager({ staff, invites, currentUserId }: { staff: StaffMe
                   <select
                     value={s.role === 'admin' ? 'admin' : 'staff'}
                     disabled={busyId === s.id}
+                    onClick={(e) => e.stopPropagation()}
                     onChange={(e) => changeRole(s.id, e.target.value as 'staff' | 'admin')}
                     className="h-8 border border-[var(--line)] bg-[var(--paper)] px-2 text-xs capitalize disabled:opacity-50"
                   >

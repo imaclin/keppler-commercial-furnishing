@@ -28,7 +28,7 @@ function StatusPill({ status }: { status: string }) {
   );
 }
 
-type SaleRow = { id: string; status: string; total_cents: number; created_at: string };
+type SaleRow = { id: string; status: string; total_cents: number; created_at: string; image_url?: string | null };
 type SampleRow = { id: string; status: string; wood: string | null; finish: string | null; created_at: string };
 
 export function CustomerActivityTabs({
@@ -65,7 +65,7 @@ export function CustomerActivityTabs({
 
       <div className="mt-6">
         {active === 'orders' && (
-          <SaleList rows={orders} hrefBase="/admin/orders" empty="No orders yet." />
+          <SaleList rows={orders} hrefBase="/admin/orders" empty="No orders yet." showImage />
         )}
         {active === 'quotes' && (
           <SaleList rows={quotes} hrefBase="/admin/quotes" empty="No quotes yet." hideZeroTotal />
@@ -92,13 +92,21 @@ export function CustomerActivityTabs({
   );
 }
 
-function SaleList({ rows, hrefBase, empty, hideZeroTotal }: { rows: SaleRow[]; hrefBase: string; empty: string; hideZeroTotal?: boolean }) {
+function SaleList({ rows, hrefBase, empty, hideZeroTotal, showImage }: { rows: SaleRow[]; hrefBase: string; empty: string; hideZeroTotal?: boolean; showImage?: boolean }) {
   if (rows.length === 0) return <p className="text-sm text-[var(--stone)]">{empty}</p>;
   return (
     <ul className="divide-y divide-[var(--line)] overflow-hidden rounded-lg border border-[var(--line)] bg-[var(--paper)]">
       {rows.map((r) => (
-        <li key={r.id} className="flex items-center justify-between gap-2 px-4 py-3 hover:bg-[var(--bone)]/50">
-          <div>
+        <li key={r.id} className="flex items-center gap-3 px-4 py-3 hover:bg-[var(--bone)]/50">
+          {showImage && (
+            r.image_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={r.image_url} alt="" className="h-11 w-11 max-w-none shrink-0 rounded object-cover border border-[var(--line)] bg-[var(--bone)]" />
+            ) : (
+              <div className="h-11 w-11 shrink-0 rounded border border-[var(--line)] bg-[var(--bone)]" />
+            )
+          )}
+          <div className="min-w-0 flex-1">
             <Link href={`${hrefBase}/${r.id}`} className="text-sm font-medium text-[var(--ink)] hover:underline">#{r.id.slice(0, 8)}</Link>
             <div className="text-xs text-[var(--stone)]">{timeAgo(r.created_at)}</div>
           </div>

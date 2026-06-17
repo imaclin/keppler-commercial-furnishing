@@ -19,7 +19,10 @@ export async function getCustomer(id: string) {
     'select pr.id, pr.name, u.email, pr.created_at from profiles pr join users u on u.id = pr.id where pr.id = $1', [id]);
   if (!profile) return null;
   const [orders, quotes, samples, ltv] = await Promise.all([
-    query('select id, status, total_cents, created_at from orders where customer_id = $1 order by created_at desc', [id]),
+    query(`select o.id, o.status, o.total_cents, o.created_at,
+        (select pi.url from order_items oi join product_images pi on pi.product_id = oi.product_id
+           where oi.order_id = o.id order by oi.id, pi.sort_order limit 1) as image_url
+       from orders o where o.customer_id = $1 order by o.created_at desc`, [id]),
     query('select id, status, total_cents, created_at from quotes where customer_id = $1 order by created_at desc', [id]),
     query("select s.id, s.status, w.name as wood, f.name as finish, s.created_at from sample_requests s left join wood_species w on w.id=s.wood_id left join finishes f on f.id=s.finish_id where s.user_id = $1 order by s.created_at desc", [id]),
     queryOne<{ c: string }>('select coalesce(sum(total_cents),0)::text as c from orders where customer_id = $1', [id]),

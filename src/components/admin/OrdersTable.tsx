@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
 import type { AdminOrderRow } from '@/lib/orders';
 import { formatPriceCents, timeAgo } from '@/lib/format';
@@ -30,6 +31,7 @@ interface Props {
 
 export function OrdersTable({ rows, status = 'all', q = '' }: Props) {
   const activeTab = status || 'all';
+  const router = useRouter();
 
   return (
     <div>
@@ -101,7 +103,11 @@ export function OrdersTable({ rows, status = 'all', q = '' }: Props) {
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.id} className="group border-b border-[var(--line)] hover:bg-[var(--bone)]/30 transition-colors">
+              <tr
+                key={row.id}
+                onClick={() => router.push(`/admin/orders/${row.id}`)}
+                className="group cursor-pointer border-b border-[var(--line)] hover:bg-[var(--bone)]/30 transition-colors"
+              >
                 {/* Thumbnail + item summary */}
                 <td className="py-3 pr-4">
                   <div className="flex items-center gap-3">
