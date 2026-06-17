@@ -18,11 +18,10 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   const order = await getOrderForAdmin(id);
   if (!order) notFound();
 
+  const todayLocal = new Date().toLocaleDateString('sv'); // 'YYYY-MM-DD' local
   const isOverdue =
-    order.status !== 'delivered' &&
-    order.status !== 'cancelled' &&
-    !!order.est_delivery_date &&
-    new Date(order.est_delivery_date) < new Date();
+    order.status !== 'delivered' && order.status !== 'cancelled' &&
+    !!order.est_delivery_date && order.est_delivery_date < todayLocal;
 
   return (
     <main className="p-8">
@@ -62,8 +61,12 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
               <div className="divide-y divide-[var(--line)] border border-[var(--line)] bg-[var(--paper)]">
                 {order.items.map((item) => (
                   <div key={item.id} className="flex items-start gap-4 p-4">
-                    {/* Thumbnail placeholder: product_id available but no single-item image query here, keep minimal */}
-                    <div className="h-14 w-14 shrink-0 rounded bg-[var(--bone)]" />
+                    <div className="h-16 w-16 shrink-0 overflow-hidden bg-[var(--bone)]">
+                      {item.image_url && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={item.image_url} alt={item.title_snapshot} className="h-full w-full object-cover" />
+                      )}
+                    </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-[var(--ink)] text-sm leading-snug">{item.title_snapshot}</div>
                       <div className="mt-0.5 text-xs text-[var(--stone)]">

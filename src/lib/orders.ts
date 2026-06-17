@@ -61,13 +61,13 @@ export async function listOrdersForAdminRich(opts: { status?: string; q?: string
     ${where} order by o.created_at desc limit 200`, params);
 }
 
-export async function getOrderForAdmin(id: string): Promise<(Order & { customer_name: string; customer_email: string; items: OrderItem[]; history: OrderStatusEvent[] }) | null> {
+export async function getOrderForAdmin(id: string): Promise<(Order & { customer_name: string; customer_email: string; items: (OrderItem & { image_url: string | null })[]; history: OrderStatusEvent[] }) | null> {
   const order = await queryOne<Order & { customer_name: string; customer_email: string }>(
     'select o.*, pr.name as customer_name, pr.email as customer_email from orders o join profiles pr on pr.id = o.customer_id where o.id = $1', [id],
   );
   if (!order) return null;
   const [items, history] = await Promise.all([
-    query<OrderItem>('select * from order_items where order_id = $1', [id]),
+    query<OrderItem & { image_url: string | null }>('select *, (select url from product_images pi where pi.product_id = order_items.product_id order by pi.sort_order limit 1) as image_url from order_items where order_id = $1', [id]),
     query<OrderStatusEvent>('select * from order_status_history where order_id = $1 order by created_at', [id]),
   ]);
   return { ...order, items, history };
