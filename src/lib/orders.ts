@@ -28,9 +28,42 @@ export async function listOrdersForAdmin(): Promise<(Order & { customer_name: st
   );
 }
 
-export async function getOrderForAdmin(id: string): Promise<(Order & { customer_name: string; items: OrderItem[]; history: OrderStatusEvent[] }) | null> {
-  const order = await queryOne<Order & { customer_name: string }>(
-    'select o.*, pr.name as customer_name from orders o join profiles pr on pr.id = o.customer_id where o.id = $1', [id],
+export type AdminOrderRow = Order & {
+  customer_name: string;
+  item_count: number;
+  first_item: string | null;
+  first_image: string | null;
+  overdue: boolean;
+};
+
+export async function listOrdersForAdminRich(opts: { status?: string; q?: string } = {}): Promise<AdminOrderRow[]> {
+  const params: unknown[] = [];
+  let where = 'where 1=1';
+  if (opts.status && opts.status !== 'all') {
+    if (opts.status === 'overdue') {
+      where += " and o.status not in ('delivered','cancelled') and o.est_delivery_date is not null and o.est_delivery_date < now()::date";
+    } else {
+      params.push(opts.status);
+      where += ` and o.status = $${params.length}`;
+    }
+  }
+  if (opts.q) {
+    params.push(`%${opts.q}%`);
+    where += ` and pr.name ilike $${params.length}`;
+  }
+  return query<AdminOrderRow>(`
+    select o.*, pr.name as customer_name,
+      (select count(*)::int from order_items i where i.order_id = o.id) as item_count,
+      (select title_snapshot from order_items i where i.order_id = o.id limit 1) as first_item,
+      (select pi.url from order_items i join product_images pi on pi.product_id = i.product_id where i.order_id = o.id order by pi.sort_order limit 1) as first_image,
+      (o.status not in ('delivered','cancelled') and o.est_delivery_date is not null and o.est_delivery_date < now()::date) as overdue
+    from orders o join profiles pr on pr.id = o.customer_id
+    ${where} order by o.created_at desc limit 200`, params);
+}
+
+export async function getOrderForAdmin(id: string): Promise<(Order & { customer_name: string; customer_email: string; items: OrderItem[]; history: OrderStatusEvent[] }) | null> {
+  const order = await queryOne<Order & { customer_name: string; customer_email: string }>(
+    'select o.*, pr.name as customer_name, pr.email as customer_email from orders o join profiles pr on pr.id = o.customer_id where o.id = $1', [id],
   );
   if (!order) return null;
   const [items, history] = await Promise.all([
