@@ -10,7 +10,7 @@ interface Props {
 
 export function MessagesInbox({ threads, activeId, children }: Props) {
   return (
-    <div className="flex h-[calc(100vh-64px)] overflow-hidden">
+    <div className="flex h-full overflow-hidden">
       {/* Left pane: conversation list */}
       <aside className="w-[320px] shrink-0 overflow-y-auto border-r border-[var(--line)] bg-[var(--paper)]">
         <div className="border-b border-[var(--line)] px-5 py-4">

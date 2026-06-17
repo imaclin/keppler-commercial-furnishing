@@ -30,7 +30,7 @@ export function AccountTopBar() {
   }, []);
 
   return (
-    <div className="flex items-center gap-4 border-b border-[var(--line)] bg-[var(--paper)] px-10 py-3.5">
+    <div className="flex shrink-0 items-center gap-4 border-b border-[var(--line)] bg-[var(--paper)] px-10 py-3.5">
       <BackButton fallback="/account" />
       <button
         onClick={() => setOpen(true)}

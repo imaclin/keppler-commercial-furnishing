@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Package, Layers, Trees, ShoppingBag, FileText, Users, MessageSquare, BarChart3,
-  PanelLeftClose, PanelLeft, Search, LogOut,
+  PanelLeftClose, PanelLeft, Search, LogOut, Settings, ShieldCheck, Globe,
 } from 'lucide-react';
 import { BackButton } from '@/components/BackButton';
 import { CommandPalette } from '@/components/CommandPalette';
@@ -29,6 +29,10 @@ const GROUPS = [
     { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
   ] },
   { title: 'Insights', items: [{ href: '/admin/reports', label: 'Reports', icon: BarChart3 }] },
+  { title: 'Admin', items: [
+    { href: '/admin/staff', label: 'Staff', icon: ShieldCheck },
+    { href: '/admin/web', label: 'Web Details', icon: Globe },
+  ] },
 ];
 
 export function AdminShell({
@@ -69,15 +73,15 @@ export function AdminShell({
   const isActive = (href: string) => (href === '/admin' ? pathname === '/admin' : pathname.startsWith(href));
 
   return (
-    <div className="flex min-h-screen bg-[var(--cream)]">
-      <aside className={`${collapsed ? 'w-[64px]' : 'w-[248px]'} flex shrink-0 flex-col bg-[var(--espresso)] text-[#cdbfaf] transition-[width] duration-200`}>
-        <div className={`flex items-center ${collapsed ? 'justify-center' : 'justify-between px-6'} h-[64px]`}>
+    <div className="flex h-screen overflow-hidden bg-[var(--cream)]">
+      <aside className={`${collapsed ? 'w-[64px]' : 'w-[248px]'} flex h-screen shrink-0 flex-col bg-[var(--espresso)] text-[#cdbfaf] transition-[width] duration-200`}>
+        <div className={`flex items-center ${collapsed ? 'justify-center' : 'justify-between px-6'} h-[64px] shrink-0`}>
           {!collapsed && <span className="serif text-2xl tracking-[0.2em] text-[#fffdfa]">HW</span>}
           <button onClick={toggle} aria-label="Toggle sidebar" className="text-[#cdbfaf] hover:text-white">
             {collapsed ? <PanelLeft className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
           </button>
         </div>
-        <nav className="mt-2 flex-1">
+        <nav className="mt-2 flex-1 overflow-y-auto">
           {GROUPS.map((g) => (
             <div key={g.title} className="mb-4">
               {!collapsed && <div className="px-6 pb-1 text-[9.5px] uppercase tracking-[0.2em] text-[#7d7160]">{g.title}</div>}
@@ -95,9 +99,20 @@ export function AdminShell({
           ))}
         </nav>
 
-        {/* Account footer: signed-in email + sign out */}
-        <div className="mt-auto border-t border-white/10 py-3">
-          {!collapsed && <div className="truncate px-6 pb-1 text-[11px] text-[#9c8f7d]">{email}</div>}
+        {/* Account footer: signed-in email + settings + sign out */}
+        <div className="mt-auto shrink-0 border-t border-white/10 py-3">
+          {collapsed ? (
+            <Link href="/admin/settings" title="Settings" className="flex justify-center py-2 text-[#c9bca9] hover:text-[#fffdfa]">
+              <Settings className="h-[18px] w-[18px]" />
+            </Link>
+          ) : (
+            <div className="flex items-center gap-2 px-6 pb-1">
+              <span className="flex-1 truncate text-[11px] text-[#9c8f7d]">{email}</span>
+              <Link href="/admin/settings" title="Settings" aria-label="Settings" className="text-[#9c8f7d] hover:text-[#fffdfa]">
+                <Settings className="h-4 w-4" />
+              </Link>
+            </div>
+          )}
           <form action="/auth/signout" method="post">
             <button title={collapsed ? 'Sign out' : undefined}
               className={`flex w-full items-center gap-3 ${collapsed ? 'justify-center px-0' : 'px-6'} py-2.5 text-sm text-[#c9bca9] hover:text-[#fffdfa]`}>
@@ -107,8 +122,8 @@ export function AdminShell({
         </div>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="grid h-[64px] grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-[var(--line)] bg-[var(--paper)] px-6">
+      <div className="flex h-screen min-w-0 flex-1 flex-col">
+        <header className="grid h-[64px] shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-[var(--line)] bg-[var(--paper)] px-6">
           <div className="justify-self-start">
             <BackButton fallback="/admin" />
           </div>
@@ -124,7 +139,7 @@ export function AdminShell({
             <Notifications counts={attention} />
           </div>
         </header>
-        <div className="min-w-0 flex-1">{children}</div>
+        <div className="min-w-0 flex-1 overflow-y-auto">{children}</div>
       </div>
 
       <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} navItems={navItems} entityItems={commandItems} />
