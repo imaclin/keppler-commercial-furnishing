@@ -10,7 +10,7 @@ export default async function SamplesPage() {
       {samples.length === 0 ? (
         <p className="mt-4 text-sm text-[var(--stone)]">No sample requests yet. Order a wood and finish sample from any product page.</p>
       ) : (
-        <ul className="mt-8 max-w-2xl divide-y divide-[var(--line)] border-y border-[var(--line)]">
+        <ul className="mt-8 divide-y divide-[var(--line)] border-y border-[var(--line)]">
           {samples.map((s) => (
             <li key={s.id} className="flex items-center justify-between py-4 text-sm">
               <div>

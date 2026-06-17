@@ -18,7 +18,7 @@ export default async function AdminQuoteDetailPage({ params }: { params: Promise
   if (!quote) notFound();
 
   return (
-    <main className="p-10 max-w-3xl">
+    <main className="p-10">
       <div className="flex items-center gap-3 mb-1">
         <Link href="/admin/quotes" className="text-xs text-[var(--walnut)] hover:underline">Quotes</Link>
         <span className="text-[var(--stone)]">/</span>
@@ -39,12 +39,12 @@ export default async function AdminQuoteDetailPage({ params }: { params: Promise
         Requested {new Date(quote.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
       </p>
 
-      {quote.items.length > 0 && (
-        <div className="mt-8">
+      <div className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)]">
+        <div>
           <div className="text-[8px] uppercase tracking-[0.4em] text-[var(--stone)] mb-3">Items</div>
-          <div className="space-y-2 mb-4">
+          <div className="space-y-2">
             {quote.items.map((item) => (
-              <div key={item.id} className="border border-[var(--line)] bg-[var(--paper)] px-4 py-2 text-sm">
+              <div key={item.id} className="border border-[var(--line)] bg-[var(--paper)] px-4 py-3 text-sm">
                 <span className="font-medium text-[var(--ink)]">{item.title_snapshot}</span>
                 {(item.wood_name || item.finish_name || item.size_label) && (
                   <span className="ml-2 text-[var(--stone)]">
@@ -57,19 +57,20 @@ export default async function AdminQuoteDetailPage({ params }: { params: Promise
                 )}
               </div>
             ))}
+            {quote.items.length === 0 && <p className="text-sm text-[var(--stone)]">No items on this quote.</p>}
           </div>
         </div>
-      )}
 
-      <div className="mt-8 border-t border-[var(--line)] pt-8">
-        <div className="text-[8px] uppercase tracking-[0.4em] text-[var(--stone)] mb-6">Price and Send</div>
-        <QuotePricingForm
-          quoteId={id}
-          status={quote.status}
-          items={quote.items}
-          initialValidUntil={quote.valid_until}
-          initialNotes={quote.notes}
-        />
+        <div className="border-t border-[var(--line)] pt-8 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
+          <div className="text-[8px] uppercase tracking-[0.4em] text-[var(--stone)] mb-6">Price and Send</div>
+          <QuotePricingForm
+            quoteId={id}
+            status={quote.status}
+            items={quote.items}
+            initialValidUntil={quote.valid_until}
+            initialNotes={quote.notes}
+          />
+        </div>
       </div>
     </main>
   );

@@ -8,7 +8,7 @@ export default async function WoodsPage() {
   return (
     <main className="p-10">
       <h1 className="serif text-3xl text-[var(--ink)]">Wood &amp; Finishes</h1>
-      <div className="mt-8 grid max-w-3xl grid-cols-2 gap-10">
+      <div className="mt-8 grid grid-cols-1 gap-10 md:grid-cols-2">
         <section>
           <div className="eyebrow mb-3">Wood Species</div>
           <ul className="mb-4 space-y-2">
