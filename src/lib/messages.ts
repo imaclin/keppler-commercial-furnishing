@@ -23,3 +23,29 @@ export async function listMessageThreads(): Promise<{ customer_id: string; custo
      group by m.customer_id, pr.name order by max(m.created_at) desc`,
   );
 }
+
+export type MessageThreadRich = {
+  customer_id: string;
+  customer_name: string;
+  last_body: string;
+  last_sender: string;
+  last_at: string;
+  unread: number;
+};
+
+export async function listMessageThreadsRich(): Promise<MessageThreadRich[]> {
+  const rows = await query<MessageThreadRich>(`
+    select distinct on (m.customer_id)
+      m.customer_id,
+      pr.name as customer_name,
+      m.body as last_body,
+      m.sender as last_sender,
+      m.created_at as last_at,
+      (select count(*) from messages mm where mm.customer_id = m.customer_id and mm.sender = 'customer' and mm.read_at is null)::int as unread
+    from messages m
+    join profiles pr on pr.id = m.customer_id
+    order by m.customer_id, m.created_at desc
+  `);
+  // distinct on requires ordering by customer_id, so re-sort by last_at desc here
+  return rows.sort((a, b) => new Date(b.last_at).getTime() - new Date(a.last_at).getTime());
+}

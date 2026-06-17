@@ -1,35 +1,38 @@
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { listMessages, markRead } from '@/lib/messages';
-import { queryOne } from '@/lib/db';
+import { listMessages, markRead, listMessageThreadsRich } from '@/lib/messages';
 import { AdminMessageThread } from '@/components/admin/AdminMessageThread';
+import { MessagesInbox } from '@/components/admin/MessagesInbox';
 
 export default async function AdminMessageDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: customerId } = await params;
 
-  const customer = await queryOne<{ name: string }>(
-    'select name from profiles where id = $1',
-    [customerId],
-  );
-  if (!customer) notFound();
-
-  // mark customer messages as read by staff
+  // Mark customer messages as read by staff before fetching
   await markRead(customerId, 'staff');
 
-  const messages = await listMessages(customerId);
+  const [threads, messages] = await Promise.all([
+    listMessageThreadsRich(),
+    listMessages(customerId),
+  ]);
+
+  const thread = threads.find((t) => t.customer_id === customerId);
+  if (!thread) notFound();
+
+  const customerName = thread.customer_name;
 
   return (
-    <main className="p-10">
-      <div className="flex items-center gap-3 mb-1">
-        <Link href="/admin/messages" className="text-xs text-[var(--walnut)] hover:underline">Messages</Link>
-        <span className="text-[var(--stone)]">/</span>
-        <span className="text-xs text-[var(--stone)]">{customer.name}</span>
+    <MessagesInbox threads={threads} activeId={customerId}>
+      <div className="flex flex-col h-full">
+        {/* Thread header */}
+        <div className="border-b border-[var(--line)] bg-[var(--paper)] px-6 py-4">
+          <div className="text-[11px] uppercase tracking-[0.14em] text-[var(--stone)]">Conversation</div>
+          <h2 className="serif mt-0.5 text-xl text-[var(--ink)]">{customerName}</h2>
+        </div>
+
+        {/* Thread body */}
+        <div className="flex-1 overflow-y-auto p-6">
+          <AdminMessageThread customerId={customerId} messages={messages} />
+        </div>
       </div>
-
-      <h1 className="serif mt-4 text-3xl text-[var(--ink)]">{customer.name}</h1>
-      <p className="mt-1 mb-8 text-sm text-[var(--stone)]">Message thread</p>
-
-      <AdminMessageThread customerId={customerId} messages={messages} />
-    </main>
+    </MessagesInbox>
   );
 }
