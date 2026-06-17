@@ -5,11 +5,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Package, Layers, Trees, ShoppingBag, FileText, Users, MessageSquare, BarChart3,
-  PanelLeftClose, PanelLeft, Search, Plus, LogOut,
+  PanelLeftClose, PanelLeft, Search, LogOut,
 } from 'lucide-react';
 import { BackButton } from '@/components/BackButton';
 import { CommandPalette } from '@/components/CommandPalette';
+import { Notifications } from '@/components/admin/Notifications';
 import type { CommandItem } from '@/lib/search';
+import type { AttentionCounts } from '@/lib/analytics';
 
 const GROUPS = [
   { title: 'Overview', items: [{ href: '/admin', label: 'Dashboard', icon: LayoutDashboard }] },
@@ -30,11 +32,12 @@ const GROUPS = [
 ];
 
 export function AdminShell({
-  email, initialCollapsed, commandItems, children,
+  email, initialCollapsed, commandItems, attention, children,
 }: {
   email: string;
   initialCollapsed: boolean;
   commandItems: CommandItem[];
+  attention: AttentionCounts;
   children: React.ReactNode;
 }) {
   const [collapsed, setCollapsed] = useState(initialCollapsed);
@@ -105,17 +108,21 @@ export function AdminShell({
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-[64px] items-center gap-4 border-b border-[var(--line)] bg-[var(--paper)] px-6">
-          <BackButton fallback="/admin" />
+        <header className="grid h-[64px] grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-[var(--line)] bg-[var(--paper)] px-6">
+          <div className="justify-self-start">
+            <BackButton fallback="/admin" />
+          </div>
           <button
             onClick={() => setPaletteOpen(true)}
-            className="flex flex-1 max-w-md items-center gap-2 rounded-md border border-[var(--line)] bg-[var(--cream)] px-3 py-2 text-sm text-[var(--stone)] hover:border-[var(--stone)]"
+            className="flex w-[min(28rem,60vw)] items-center gap-2 rounded-md border border-[var(--line)] bg-[var(--cream)] px-3 py-2 text-sm text-[var(--stone)] hover:border-[var(--stone)]"
           >
             <Search className="h-4 w-4" />
             <span>Search...</span>
             <kbd className="ml-auto rounded border border-[var(--line)] bg-[var(--paper)] px-1.5 py-0.5 text-[10px]">⌘K</kbd>
           </button>
-          <Link href="/admin/products/new" className="flex shrink-0 items-center gap-1 bg-[var(--espresso)] px-3 py-2 text-[11px] uppercase tracking-[0.12em] text-[#fffdfa]"><Plus className="h-3.5 w-3.5" /> New Product</Link>
+          <div className="justify-self-end">
+            <Notifications counts={attention} />
+          </div>
         </header>
         <div className="min-w-0 flex-1">{children}</div>
       </div>

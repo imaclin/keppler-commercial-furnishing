@@ -19,11 +19,29 @@ export async function createFinish(name: string, swatchColor: string): Promise<v
 export async function listCollections(): Promise<Collection[]> {
   return query<Collection>('select * from collections order by sort_order, name');
 }
-export async function createCollection(args: { slug: string; name: string; description: string | null }): Promise<void> {
-  await query(
-    'insert into collections (slug, name, description) values ($1, $2, $3) on conflict (slug) do nothing',
-    [args.slug, args.name, args.description],
+
+export type CollectionWithCount = Collection & { product_count: number };
+export async function listCollectionsWithCounts(): Promise<CollectionWithCount[]> {
+  return query<CollectionWithCount>(
+    `select c.*, (select count(*) from products p where p.collection_id = c.id)::int as product_count
+       from collections c order by c.sort_order, c.name`,
   );
+}
+
+export async function getCollectionById(id: string): Promise<Collection | null> {
+  return queryOne<Collection>('select * from collections where id = $1', [id]);
+}
+
+export async function createCollection(args: { slug: string; name: string; description: string | null; heroImageUrl?: string | null }): Promise<void> {
+  await query(
+    'insert into collections (slug, name, description, hero_image_url) values ($1, $2, $3, $4) on conflict (slug) do nothing',
+    [args.slug, args.name, args.description, args.heroImageUrl ?? null],
+  );
+}
+
+/** Assign or unassign a product to a collection (products belong to one collection). */
+export async function setProductCollection(productId: string, collectionId: string | null): Promise<void> {
+  await query('update products set collection_id = $2, updated_at = now() where id = $1', [productId, collectionId]);
 }
 
 // ---------- products ----------

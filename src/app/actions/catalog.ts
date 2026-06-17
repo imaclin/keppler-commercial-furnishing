@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { requireStaff } from '@/lib/auth';
-import { createWood, createFinish, createCollection, createProduct, updateProduct, type ProductInput } from '@/lib/catalog';
+import { createWood, createFinish, createCollection, createProduct, updateProduct, setProductCollection, type ProductInput } from '@/lib/catalog';
 import { slugify } from '@/lib/format';
 
 export async function addWoodAction(formData: FormData): Promise<void> {
@@ -26,8 +26,16 @@ export async function addCollectionAction(formData: FormData): Promise<void> {
   await requireStaff();
   const name = String(formData.get('name') ?? '').trim();
   const description = String(formData.get('description') ?? '').trim() || null;
-  if (name) await createCollection({ slug: slugify(name), name, description });
+  const heroImageUrl = String(formData.get('hero_image_url') ?? '').trim() || null;
+  if (name) await createCollection({ slug: slugify(name), name, description, heroImageUrl });
   revalidatePath('/admin/collections');
+}
+
+export async function setProductCollectionAction(productId: string, collectionId: string | null): Promise<void> {
+  await requireStaff();
+  await setProductCollection(productId, collectionId);
+  revalidatePath('/admin/collections');
+  if (collectionId) revalidatePath(`/admin/collections/${collectionId}`);
 }
 
 export type SaveProductState = { error: string } | null;
