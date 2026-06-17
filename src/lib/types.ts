@@ -30,6 +30,7 @@ export type Product = {
   id: string; slug: string; name: string; category: ProductCategory;
   collection_id: string | null; short_description: string | null; story: string | null;
   base_price_cents: number; lead_time_weeks: number | null; region: string | null;
+  length_in: number | null; width_in: number | null; height_in: number | null; weight_lb: number | null;
   status: ProductStatus; featured: boolean; created_at: string; updated_at: string;
 };
 

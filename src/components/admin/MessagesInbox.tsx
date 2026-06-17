@@ -62,7 +62,7 @@ export function MessagesInbox({ threads, activeId, children }: Props) {
       </aside>
 
       {/* Right pane: active thread or empty state */}
-      <div className="flex min-w-0 flex-1 flex-col overflow-y-auto bg-[var(--cream)]">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-[var(--cream)]">
         {children ?? (
           <div className="flex flex-1 items-center justify-center">
             <p className="text-sm text-[var(--stone)]">Select a conversation to reply.</p>

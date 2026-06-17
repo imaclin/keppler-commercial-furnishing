@@ -57,6 +57,7 @@ export type ProductInput = {
   slug: string; name: string; category: 'table' | 'chair'; collection_id: string | null;
   short_description: string | null; story: string | null; base_price_cents: number;
   lead_time_weeks: number | null; region: string | null; status: 'draft' | 'published'; featured: boolean;
+  length_in: number | null; width_in: number | null; height_in: number | null; weight_lb: number | null;
   woodIds: string[]; finishIds: string[];
   sizes: { label: string; seats: number | null; price_delta_cents: number }[];
   imageUrls: string[];
@@ -66,10 +67,12 @@ export async function createProduct(input: ProductInput): Promise<string> {
   return transaction(async (client) => {
     const { rows } = await client.query(
       `insert into products (slug, name, category, collection_id, short_description, story,
-         base_price_cents, lead_time_weeks, region, status, featured)
-       values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) returning id`,
+         base_price_cents, lead_time_weeks, region, status, featured,
+         length_in, width_in, height_in, weight_lb)
+       values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) returning id`,
       [input.slug, input.name, input.category, input.collection_id, input.short_description, input.story,
-       input.base_price_cents, input.lead_time_weeks, input.region, input.status, input.featured],
+       input.base_price_cents, input.lead_time_weeks, input.region, input.status, input.featured,
+       input.length_in, input.width_in, input.height_in, input.weight_lb],
     );
     const id = rows[0].id as string;
     await writeProductRelations(client, id, input);
@@ -81,10 +84,12 @@ export async function updateProduct(id: string, input: ProductInput): Promise<vo
   await transaction(async (client) => {
     await client.query(
       `update products set slug=$2, name=$3, category=$4, collection_id=$5, short_description=$6, story=$7,
-         base_price_cents=$8, lead_time_weeks=$9, region=$10, status=$11, featured=$12, updated_at=now()
+         base_price_cents=$8, lead_time_weeks=$9, region=$10, status=$11, featured=$12,
+         length_in=$13, width_in=$14, height_in=$15, weight_lb=$16, updated_at=now()
        where id=$1`,
       [id, input.slug, input.name, input.category, input.collection_id, input.short_description, input.story,
-       input.base_price_cents, input.lead_time_weeks, input.region, input.status, input.featured],
+       input.base_price_cents, input.lead_time_weeks, input.region, input.status, input.featured,
+       input.length_in, input.width_in, input.height_in, input.weight_lb],
     );
     // Replace relations wholesale (simplest correct approach for an admin form save).
     await client.query('delete from product_woods where product_id = $1', [id]);

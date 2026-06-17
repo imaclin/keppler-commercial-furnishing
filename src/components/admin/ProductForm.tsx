@@ -30,6 +30,10 @@ export function ProductForm({
   const [basePrice, setBasePrice] = useState(product ? String(product.base_price_cents / 100) : '');
   const [leadTime, setLeadTime] = useState(product?.lead_time_weeks ? String(product.lead_time_weeks) : '');
   const [region, setRegion] = useState(product?.region ?? '');
+  const [lengthIn, setLengthIn] = useState(product?.length_in != null ? String(product.length_in) : '');
+  const [widthIn, setWidthIn] = useState(product?.width_in != null ? String(product.width_in) : '');
+  const [heightIn, setHeightIn] = useState(product?.height_in != null ? String(product.height_in) : '');
+  const [weightLb, setWeightLb] = useState(product?.weight_lb != null ? String(product.weight_lb) : '');
   const [status, setStatus] = useState<'draft' | 'published'>(product?.status ?? 'draft');
   const [featured, setFeatured] = useState(product?.featured ?? false);
   const [woodIds, setWoodIds] = useState<string[]>(product?.woodIds.map((w) => w.wood_id) ?? []);
@@ -67,6 +71,10 @@ export function ProductForm({
       base_price_cents: Math.round(parseFloat(basePrice || '0') * 100),
       lead_time_weeks: leadTime ? parseInt(leadTime, 10) : null,
       region: region.trim() || null, status, featured,
+      length_in: lengthIn.trim() ? parseFloat(lengthIn) : null,
+      width_in: widthIn.trim() ? parseFloat(widthIn) : null,
+      height_in: heightIn.trim() ? parseFloat(heightIn) : null,
+      weight_lb: weightLb.trim() ? parseFloat(weightLb) : null,
       woodIds, finishIds,
       sizes: sizes.filter((s) => s.label.trim()).map((s) => ({
         label: s.label.trim(), seats: s.seats ? parseInt(s.seats, 10) : null,
@@ -104,6 +112,15 @@ export function ProductForm({
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2"><Label>Lead time (weeks)</Label><Input value={leadTime} onChange={(e) => setLeadTime(e.target.value)} inputMode="numeric" /></div>
         <div className="space-y-2"><Label>Region</Label><Input value={region} onChange={(e) => setRegion(e.target.value)} placeholder="Holmes County, Ohio" /></div>
+      </div>
+
+      <div className="space-y-2"><Label>Dimensions</Label>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="space-y-1"><span className="text-[11px] text-[var(--stone)]">Length (in)</span><Input value={lengthIn} onChange={(e) => setLengthIn(e.target.value)} inputMode="decimal" placeholder="84" /></div>
+          <div className="space-y-1"><span className="text-[11px] text-[var(--stone)]">Width (in)</span><Input value={widthIn} onChange={(e) => setWidthIn(e.target.value)} inputMode="decimal" placeholder="42" /></div>
+          <div className="space-y-1"><span className="text-[11px] text-[var(--stone)]">Height (in)</span><Input value={heightIn} onChange={(e) => setHeightIn(e.target.value)} inputMode="decimal" placeholder="30" /></div>
+          <div className="space-y-1"><span className="text-[11px] text-[var(--stone)]">Weight (lb)</span><Input value={weightLb} onChange={(e) => setWeightLb(e.target.value)} inputMode="decimal" placeholder="180" /></div>
+        </div>
       </div>
 
       <div className="space-y-2"><Label>Wood species offered</Label>
