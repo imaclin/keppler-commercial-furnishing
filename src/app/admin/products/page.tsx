@@ -3,15 +3,49 @@ import { listProducts } from '@/lib/catalog';
 import { formatPriceCents } from '@/lib/format';
 import { RowLink } from '@/components/admin/RowLink';
 
-export default async function ProductsPage() {
-  const products = await listProducts();
+export default async function ProductsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; category?: string; status?: string }>;
+}) {
+  const sp = await searchParams;
+  const q = sp.q?.trim() || undefined;
+  const category = sp.category === 'table' || sp.category === 'chair' ? sp.category : undefined;
+  const status = sp.status === 'draft' || sp.status === 'published' ? sp.status : undefined;
+  const products = await listProducts({ q, category, status });
+  const hasFilters = !!(q || category || status);
+
+  const selectCls = 'h-9 border border-[var(--line)] bg-[var(--paper)] px-2 text-sm text-[var(--ink)]';
+
   return (
     <main className="p-10">
       <div className="flex items-center justify-between">
         <h1 className="serif text-3xl text-[var(--ink)]">Products</h1>
         <Link href="/admin/products/new" className="bg-[var(--espresso)] px-5 py-3 text-xs uppercase tracking-[0.14em] text-[#fffdfa]">+ New Product</Link>
       </div>
-      <table className="mt-8 w-full border-collapse text-sm">
+
+      <form method="get" className="mt-6 flex flex-wrap items-center gap-2">
+        <input
+          name="q"
+          defaultValue={q ?? ''}
+          placeholder="Search products..."
+          className="w-64 border border-[var(--line)] bg-[var(--paper)] px-3 py-2 text-sm outline-none placeholder:text-[var(--stone)]"
+        />
+        <select name="category" defaultValue={category ?? ''} className={selectCls}>
+          <option value="">All categories</option>
+          <option value="table">Tables</option>
+          <option value="chair">Chairs</option>
+        </select>
+        <select name="status" defaultValue={status ?? ''} className={selectCls}>
+          <option value="">All statuses</option>
+          <option value="published">Published</option>
+          <option value="draft">Draft</option>
+        </select>
+        <button type="submit" className="bg-[var(--espresso)] px-4 py-2 text-[11px] uppercase tracking-[0.12em] text-[#fffdfa]">Filter</button>
+        {hasFilters && <Link href="/admin/products" className="text-xs text-[var(--stone)] underline">Clear</Link>}
+      </form>
+
+      <table className="mt-6 w-full border-collapse text-sm">
         <thead>
           <tr className="border-b border-[var(--espresso)] text-[10px] uppercase tracking-[0.14em] text-[var(--stone)]">
             <th className="w-[64px] py-3"></th>
@@ -40,7 +74,7 @@ export default async function ProductsPage() {
               </td>
             </RowLink>
           ))}
-          {products.length === 0 && <tr><td colSpan={5} className="py-6 text-[var(--stone)]">No products yet. Create your first piece.</td></tr>}
+          {products.length === 0 && <tr><td colSpan={5} className="py-6 text-[var(--stone)]">{hasFilters ? 'No products match these filters.' : 'No products yet. Create your first piece.'}</td></tr>}
         </tbody>
       </table>
     </main>

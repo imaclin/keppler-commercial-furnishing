@@ -50,21 +50,50 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         </span>
       </div>
 
-      {/* Two-column layout */}
-      <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_340px]">
+      {/* Single-column, full width */}
+      <div className="mt-8 space-y-10">
 
-        {/* Left column: items + total */}
-        <div>
+        {/* Fulfillment */}
+        <section className="border border-[var(--line)] bg-[var(--paper)] p-5">
+          <div className="text-[9px] uppercase tracking-[0.4em] text-[var(--stone)] mb-4">Fulfillment</div>
+          <OrderTracker status={order.status} />
+          {order.est_delivery_date && (
+            <div className="mt-5 flex items-center gap-3 text-sm">
+              <span className="text-[var(--stone)]">Estimated delivery</span>
+              <span className="font-medium text-[var(--ink)]">
+                {new Date(order.est_delivery_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </span>
+              {isOverdue && (
+                <span className="inline-block rounded bg-red-50 px-2 py-0.5 text-[10px] uppercase tracking-[0.1em] text-red-600 font-medium">
+                  Overdue
+                </span>
+              )}
+            </div>
+          )}
+        </section>
+
+        {/* Update status */}
+        <section className="border border-[var(--line)] bg-[var(--paper)] p-5">
+          <div className="text-[9px] uppercase tracking-[0.4em] text-[var(--stone)] mb-4">Update Status</div>
+          <OrderStatusForm
+            orderId={id}
+            currentStatus={order.status}
+            estDelivery={order.est_delivery_date}
+          />
+        </section>
+
+        {/* Items + total */}
+        <section>
+          <div className="text-[9px] uppercase tracking-[0.4em] text-[var(--stone)] mb-4">Items</div>
           {order.items.length > 0 ? (
-            <div>
-              <div className="text-[9px] uppercase tracking-[0.4em] text-[var(--stone)] mb-4">Items</div>
+            <>
               <div className="divide-y divide-[var(--line)] border border-[var(--line)] bg-[var(--paper)]">
                 {order.items.map((item) => (
                   <div key={item.id} className="flex items-start gap-4 p-4">
-                    <div className="h-16 w-16 shrink-0 overflow-hidden bg-[var(--bone)]">
+                    <div className="h-16 w-16 shrink-0 overflow-hidden rounded bg-[var(--bone)]">
                       {item.image_url && (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={item.image_url} alt={item.title_snapshot} className="h-full w-full object-cover" />
+                        <img src={item.image_url} alt={item.title_snapshot} className="h-full w-full max-w-none object-cover" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -83,66 +112,37 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
                   </div>
                 ))}
               </div>
-              <div className="mt-3 flex justify-between border-t border-[var(--line)] pt-3 text-sm">
+              <div className="mt-3 flex justify-between border-t border-[var(--espresso)] pt-3 text-sm">
                 <span className="text-[var(--stone)]">Order total</span>
-                <span className="font-medium text-[var(--ink)]">{formatPriceCents(order.total_cents)}</span>
+                <span className="text-lg font-medium text-[var(--ink)]">{formatPriceCents(order.total_cents)}</span>
               </div>
-            </div>
+            </>
           ) : (
             <p className="text-sm text-[var(--stone)]">No items recorded.</p>
           )}
+        </section>
 
-          {/* Status history timeline */}
-          {order.history.length > 0 && (
-            <div className="mt-10">
-              <div className="text-[9px] uppercase tracking-[0.4em] text-[var(--stone)] mb-4">Status History</div>
-              <div className="space-y-3">
-                {order.history.map((event) => (
-                  <div key={event.id} className="flex items-start gap-4 border-l-2 border-[var(--line)] pl-4 py-1">
-                    <div className="min-w-[140px] text-xs text-[var(--stone)] shrink-0">
-                      {new Date(event.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </div>
-                    <div>
-                      <span className={`rounded px-2 py-0.5 text-[11px] uppercase tracking-[0.12em] ${STATUS_PILL[event.status] ?? 'bg-[var(--bone)] text-[var(--ink)]'}`}>
-                        {event.status.replaceAll('_', ' ')}
-                      </span>
-                      {event.note && <p className="mt-1 text-sm text-[var(--stone)]">{event.note}</p>}
-                    </div>
+        {/* Status history timeline */}
+        {order.history.length > 0 && (
+          <section>
+            <div className="text-[9px] uppercase tracking-[0.4em] text-[var(--stone)] mb-4">Status History</div>
+            <div className="space-y-3">
+              {order.history.map((event) => (
+                <div key={event.id} className="flex items-start gap-4 border-l-2 border-[var(--line)] pl-4 py-1">
+                  <div className="min-w-[140px] text-xs text-[var(--stone)] shrink-0">
+                    {new Date(event.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </div>
-                ))}
-              </div>
+                  <div>
+                    <span className={`rounded px-2 py-0.5 text-[11px] uppercase tracking-[0.12em] ${STATUS_PILL[event.status] ?? 'bg-[var(--bone)] text-[var(--ink)]'}`}>
+                      {event.status.replaceAll('_', ' ')}
+                    </span>
+                    {event.note && <p className="mt-1 text-sm text-[var(--stone)]">{event.note}</p>}
+                  </div>
+                </div>
+              ))}
             </div>
-          )}
-        </div>
-
-        {/* Right column: tracker + status form */}
-        <div className="space-y-6">
-          <div className="border border-[var(--line)] bg-[var(--paper)] p-5">
-            <div className="text-[9px] uppercase tracking-[0.4em] text-[var(--stone)] mb-4">Fulfillment</div>
-            <OrderTracker status={order.status} />
-            {order.est_delivery_date && (
-              <div className="mt-5 text-center">
-                <p className="text-xs text-[var(--stone)]">Estimated delivery</p>
-                <p className="mt-0.5 text-sm font-medium text-[var(--ink)]">
-                  {new Date(order.est_delivery_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                </p>
-                {isOverdue && (
-                  <span className="mt-1 inline-block rounded bg-red-50 px-2 py-0.5 text-[10px] uppercase tracking-[0.1em] text-red-600 font-medium">
-                    Overdue
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
-
-          <div className="border border-[var(--line)] bg-[var(--paper)] p-5">
-            <OrderStatusForm
-              orderId={id}
-              currentStatus={order.status}
-              estDelivery={order.est_delivery_date}
-            />
-          </div>
-        </div>
+          </section>
+        )}
       </div>
     </main>
   );

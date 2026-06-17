@@ -45,10 +45,19 @@ export async function setProductCollection(productId: string, collectionId: stri
 }
 
 // ---------- products ----------
-export async function listProducts(): Promise<(Product & { image_url: string | null })[]> {
+export async function listProducts(
+  opts: { q?: string; category?: 'table' | 'chair'; status?: 'draft' | 'published' } = {},
+): Promise<(Product & { image_url: string | null })[]> {
+  const params: unknown[] = [];
+  const where: string[] = [];
+  if (opts.q) { params.push(`%${opts.q}%`); where.push(`p.name ilike $${params.length}`); }
+  if (opts.category) { params.push(opts.category); where.push(`p.category = $${params.length}`); }
+  if (opts.status) { params.push(opts.status); where.push(`p.status = $${params.length}`); }
+  const clause = where.length ? `where ${where.join(' and ')}` : '';
   return query<Product & { image_url: string | null }>(
     `select p.*, (select url from product_images i where i.product_id = p.id order by i.sort_order limit 1) as image_url
-       from products p order by p.created_at desc`,
+       from products p ${clause} order by p.created_at desc`,
+    params,
   );
 }
 
