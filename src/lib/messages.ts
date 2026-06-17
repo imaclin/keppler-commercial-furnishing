@@ -1,12 +1,12 @@
 import { query } from '@/lib/db';
-import type { Message } from '@/lib/types';
+import type { Message, Attachment } from '@/lib/types';
 
 export async function listMessages(customerId: string): Promise<Message[]> {
   return query<Message>('select * from messages where customer_id = $1 order by created_at', [customerId]);
 }
 
-export async function sendMessage(customerId: string, sender: 'customer' | 'staff', body: string): Promise<void> {
-  await query('insert into messages (customer_id, sender, body) values ($1, $2, $3)', [customerId, sender, body]);
+export async function sendMessage(customerId: string, sender: 'customer' | 'staff', body: string, attachments: Attachment[] = []): Promise<void> {
+  await query('insert into messages (customer_id, sender, body, attachments) values ($1, $2, $3, $4)', [customerId, sender, body, JSON.stringify(attachments)]);
 }
 
 export async function markRead(customerId: string, reader: 'customer' | 'staff'): Promise<void> {

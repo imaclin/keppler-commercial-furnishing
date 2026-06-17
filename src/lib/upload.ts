@@ -13,6 +13,32 @@ function magicMatches(type: string, bytes: Buffer): boolean {
   return false;
 }
 
+// Allowed message-attachment types (photos + common documents) and their extensions.
+const FILE_EXT: Record<string, string> = {
+  'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif',
+  'application/pdf': 'pdf', 'text/plain': 'txt', 'text/csv': 'csv',
+  'application/msword': 'doc',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+  'application/vnd.ms-excel': 'xls',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
+};
+
+export type SavedFile = { url: string; name: string; type: string; size: number };
+
+// Dev: persist any allowed attachment to public/uploads and return its metadata.
+// Stored under a random name; the original filename is preserved for download.
+export async function saveUploadedFile(file: File): Promise<SavedFile | { error: string }> {
+  const ext = FILE_EXT[file.type];
+  if (!ext) return { error: 'Unsupported file type. Upload an image, PDF, or document.' };
+  if (file.size > 15 * 1024 * 1024) return { error: 'Files must be under 15 MB.' };
+  const bytes = Buffer.from(await file.arrayBuffer());
+  const stored = `${crypto.randomUUID()}.${ext}`;
+  await mkdir(UPLOAD_DIR, { recursive: true });
+  await writeFile(path.join(UPLOAD_DIR, stored), bytes);
+  const cleanName = (file.name || `file.${ext}`).replace(/[^\w.\- ]/g, '_').slice(0, 120);
+  return { url: `/uploads/${stored}`, name: cleanName, type: file.type, size: file.size };
+}
+
 // Dev: persist to public/uploads and return a public path. Production swaps this
 // for Supabase Storage; callers only depend on the returned URL string.
 export async function saveUploadedImage(file: File): Promise<{ url: string } | { error: string }> {

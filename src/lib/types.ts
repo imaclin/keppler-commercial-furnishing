@@ -80,4 +80,5 @@ export type Order = {
   subtotal_cents: number; total_cents: number; est_delivery_date: string | null; created_at: string;
 };
 export type OrderStatusEvent = { id: string; order_id: string; status: string; note: string | null; created_at: string };
-export type Message = { id: string; customer_id: string; sender: 'customer' | 'staff'; body: string; read_at: string | null; created_at: string };
+export type Attachment = { url: string; name: string; type: string; size: number };
+export type Message = { id: string; customer_id: string; sender: 'customer' | 'staff'; body: string; read_at: string | null; created_at: string; attachments: Attachment[] };
