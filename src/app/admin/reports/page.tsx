@@ -32,7 +32,7 @@ export default async function AdminReportsPage() {
     : null;
 
   return (
-    <main className="p-8">
+    <main className="p-5 md:p-8">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="serif text-3xl text-[var(--ink)]">Reports</h1>
         <div className="flex items-center gap-3">

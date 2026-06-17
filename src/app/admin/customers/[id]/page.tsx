@@ -19,7 +19,7 @@ export default async function AdminCustomerDetailPage({
   const { profile, orders, quotes, samples, ltvCents } = customer;
 
   return (
-    <main className="p-8">
+    <main className="p-5 md:p-8">
       <div className="mb-6">
         <Link href="/admin/customers" className="text-xs uppercase tracking-[0.12em] text-[var(--stone)] hover:text-[var(--ink)]">
           Customers

@@ -18,7 +18,7 @@ export default async function AdminQuoteDetailPage({ params }: { params: Promise
   if (!quote) notFound();
 
   return (
-    <main className="p-10">
+    <main className="p-5 md:p-10">
       <div className="flex items-center gap-3 mb-1">
         <Link href="/admin/quotes" className="text-xs text-[var(--walnut)] hover:underline">Quotes</Link>
         <span className="text-[var(--stone)]">/</span>

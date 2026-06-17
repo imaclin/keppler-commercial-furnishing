@@ -24,7 +24,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
     !!order.est_delivery_date && order.est_delivery_date < todayLocal;
 
   return (
-    <main className="p-8">
+    <main className="p-5 md:p-8">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-xs text-[var(--stone)]">
         <Link href="/admin/orders" className="text-[var(--walnut)] hover:underline">Orders</Link>

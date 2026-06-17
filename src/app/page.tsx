@@ -19,7 +19,7 @@ export default async function HomePage() {
 
       <main>
         {/* Hero */}
-        <section className="relative h-[760px] overflow-hidden">
+        <section className="relative h-[520px] overflow-hidden md:h-[760px]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/brand/hero.png"
@@ -31,10 +31,10 @@ export default async function HomePage() {
             className="absolute inset-0 flex items-center"
             style={{ background: 'linear-gradient(90deg, rgba(30,24,18,0.40) 0%, rgba(30,24,18,0.12) 45%, rgba(30,24,18,0) 75%)' }}
           >
-            <div className="mx-auto w-full max-w-[1320px] px-14">
+            <div className="mx-auto w-full max-w-[1320px] px-6 md:px-14">
               <div className="eyebrow" style={{ color: 'rgba(255,253,250,0.82)' }}>Handcrafted in America</div>
               <h1
-                className="serif mt-5 max-w-[620px] text-[72px] font-medium leading-[1.04] tracking-[0.005em]"
+                className="serif mt-5 max-w-[620px] text-[40px] font-medium leading-[1.06] tracking-[0.005em] sm:text-[56px] md:text-[72px] md:leading-[1.04]"
                 style={{ color: '#fffdfa' }}
               >
                 Built once.<br />Kept for generations.
@@ -60,9 +60,9 @@ export default async function HomePage() {
         </section>
 
         {/* Intro statement band */}
-        <section className="px-14 pb-[84px] pt-24 text-center">
+        <section className="px-6 pb-16 pt-16 text-center md:px-14 md:pb-[84px] md:pt-24">
           <div className="eyebrow">The HW Standard</div>
-          <h2 className="serif mx-auto mt-[18px] max-w-[760px] text-[38px] font-normal leading-[1.3] text-[var(--ink)]">
+          <h2 className="serif mx-auto mt-[18px] max-w-[760px] text-[26px] font-normal leading-[1.3] text-[var(--ink)] md:text-[38px]">
             Every piece is cut, joined, and finished by hand from a single intention: to outlast the people who buy it.
           </h2>
           <div className="mx-auto mt-[26px] h-[1.5px] w-[44px] bg-[var(--walnut)]" />
@@ -70,7 +70,7 @@ export default async function HomePage() {
 
         {/* Category split: Tables / Chairs */}
         <section className="grid grid-cols-2 gap-[4px]">
-          <Link href="/tables" className="group relative block h-[560px] overflow-hidden">
+          <Link href="/tables" className="group relative block h-[340px] overflow-hidden md:h-[560px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/demo/demo-table.png"
@@ -90,7 +90,7 @@ export default async function HomePage() {
               </div>
             </div>
           </Link>
-          <Link href="/chairs" className="group relative block h-[560px] overflow-hidden">
+          <Link href="/chairs" className="group relative block h-[340px] overflow-hidden md:h-[560px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/demo/demo-chair.png"
@@ -113,13 +113,13 @@ export default async function HomePage() {
         </section>
 
         {/* Featured Pieces */}
-        <section className="py-24">
-          <div className="mx-auto max-w-[1320px] px-14">
-            <div className="mb-[52px] text-center">
+        <section className="py-16 md:py-24">
+          <div className="mx-auto max-w-[1320px] px-6 md:px-14">
+            <div className="mb-10 text-center md:mb-[52px]">
               <div className="eyebrow">New This Season</div>
-              <h2 className="serif mt-3 text-[42px] font-normal text-[var(--ink)]">Featured Pieces</h2>
+              <h2 className="serif mt-3 text-[30px] font-normal text-[var(--ink)] md:text-[42px]">Featured Pieces</h2>
             </div>
-            <div className="grid grid-cols-2 gap-[30px] md:grid-cols-4">
+            <div className="grid grid-cols-2 gap-5 md:grid-cols-4 md:gap-[30px]">
               {featured.map((p) => <ProductCard key={p.id} product={p} />)}
             </div>
             <div className="mt-[56px] text-center">
@@ -134,14 +134,14 @@ export default async function HomePage() {
         </section>
 
         {/* Craft band */}
-        <section className="grid grid-cols-2" style={{ alignItems: 'stretch' }}>
-          <div className="h-[640px] overflow-hidden">
+        <section className="grid grid-cols-1 md:grid-cols-2" style={{ alignItems: 'stretch' }}>
+          <div className="h-[280px] overflow-hidden md:h-[640px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/brand/craft.png" alt="Our craft" className="h-full w-full object-cover" />
           </div>
-          <div className="flex flex-col justify-center bg-[var(--bone)] px-[92px] py-20">
+          <div className="flex flex-col justify-center bg-[var(--bone)] px-6 py-12 md:px-[92px] md:py-20">
             <div className="eyebrow">Our Craft</div>
-            <h2 className="serif mt-5 text-[46px] font-normal leading-[1.15] text-[var(--ink)]">
+            <h2 className="serif mt-5 text-[32px] font-normal leading-[1.15] text-[var(--ink)] md:text-[46px]">
               Made by hands<br />that have done it<br />for generations.
             </h2>
             <p className="mt-6 max-w-[440px] text-[15px] leading-[1.85] font-light text-[var(--ink)]">
@@ -161,11 +161,11 @@ export default async function HomePage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/brand/room.png" alt="Consultation" className="h-full w-full object-cover" />
           <div
-            className="absolute inset-0 flex items-center justify-center text-center"
+            className="absolute inset-0 flex items-center justify-center px-6 text-center"
             style={{ background: 'rgba(30,24,18,0.42)' }}
           >
             <div>
-              <h2 className="serif text-[50px] font-medium leading-[1.12] max-w-[640px]" style={{ color: '#fffdfa' }}>
+              <h2 className="serif text-[34px] font-medium leading-[1.12] max-w-[640px] md:text-[50px]" style={{ color: '#fffdfa' }}>
                 Design it with us.
               </h2>
               <p
@@ -185,7 +185,7 @@ export default async function HomePage() {
         </section>
 
         {/* Newsletter strip */}
-        <section className="border-t border-[var(--line)] bg-[#fffdfa] px-14 py-[84px] text-center">
+        <section className="border-t border-[var(--line)] bg-[#fffdfa] px-6 py-16 text-center md:px-14 md:py-[84px]">
           <h3 className="serif text-[30px] font-normal text-[var(--ink)]">Join the workshop list</h3>
           <p className="mx-auto mb-[26px] mt-3 text-[13px] tracking-[0.03em] text-[var(--stone)]">
             New collections, the stories behind them, and the occasional look inside the shop.

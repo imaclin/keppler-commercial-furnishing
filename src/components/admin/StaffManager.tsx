@@ -126,7 +126,8 @@ export function StaffManager({ staff, invites, currentUserId }: { staff: StaffMe
 
       <div>
         <div className="eyebrow mb-2">Team</div>
-        <table className="w-full border-collapse text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[560px] border-collapse text-sm">
           <thead>
             <tr className="border-b border-[var(--espresso)] text-left text-[10px] uppercase tracking-[0.14em] text-[var(--stone)]">
               <th className="py-3">Name</th><th>Email</th><th>Joined</th><th className="text-right">Role</th>
@@ -159,6 +160,7 @@ export function StaffManager({ staff, invites, currentUserId }: { staff: StaffMe
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

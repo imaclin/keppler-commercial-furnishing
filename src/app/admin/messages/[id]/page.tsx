@@ -1,4 +1,6 @@
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { ChevronLeft } from 'lucide-react';
 import { listMessages, markRead, listMessageThreadsRich } from '@/lib/messages';
 import { AdminMessageThread } from '@/components/admin/AdminMessageThread';
 import { MessagesInbox } from '@/components/admin/MessagesInbox';
@@ -24,6 +26,9 @@ export default async function AdminMessageDetailPage({ params }: { params: Promi
       <div className="flex h-full min-h-0 flex-col">
         {/* Thread header */}
         <div className="shrink-0 border-b border-[var(--line)] bg-[var(--paper)] px-6 py-4">
+          <Link href="/admin/messages" className="mb-2 inline-flex items-center gap-1 text-xs text-[var(--walnut)] md:hidden">
+            <ChevronLeft className="h-4 w-4" /> Conversations
+          </Link>
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--walnut)] text-sm font-semibold text-[#fffdfa] float-left mr-3">
             {customerName.charAt(0).toUpperCase()}
           </div>

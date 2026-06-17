@@ -13,9 +13,10 @@ const STATUS_COLORS: Record<string, string> = {
 export default async function AdminQuotesPage() {
   const quotes = await listQuotesForAdmin();
   return (
-    <main className="p-10">
+    <main className="p-5 md:p-10">
       <h1 className="serif text-3xl text-[var(--ink)]">Quotes</h1>
-      <table className="mt-8 w-full border-collapse text-sm">
+      <div className="mt-8 overflow-x-auto">
+      <table className="w-full min-w-[600px] border-collapse text-sm">
         <thead>
           <tr className="border-b border-[var(--espresso)] text-left text-[10px] uppercase tracking-[0.14em] text-[var(--stone)]">
             <th className="py-3">Customer</th>
@@ -50,6 +51,7 @@ export default async function AdminQuotesPage() {
           )}
         </tbody>
       </table>
+      </div>
     </main>
   );
 }

@@ -30,7 +30,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   return (
     <>
       <Header />
-      <main className="mx-auto max-w-[1320px] px-14 py-10">
+      <main className="mx-auto max-w-[1320px] px-6 md:px-14 py-10">
         <div className="mb-6 text-[11px] uppercase tracking-[0.12em] text-[var(--stone)]">
           <Link href="/">Home</Link> / <Link href={`/${product.category}s`} className="capitalize">{product.category}s</Link> / {product.name}
         </div>

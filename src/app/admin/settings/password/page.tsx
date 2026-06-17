@@ -5,7 +5,7 @@ import { PasswordForm } from '@/components/admin/settings/PasswordForm';
 export default async function SettingsPasswordPage() {
   await requireStaff();
   return (
-    <main className="p-10">
+    <main className="p-5 md:p-10">
       <div className="mb-4 flex items-center gap-3 text-xs">
         <Link href="/admin/settings" className="text-[var(--walnut)] hover:underline">Settings</Link>
         <span className="text-[var(--stone)]">/</span>

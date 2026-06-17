@@ -14,7 +14,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
   return (
     <>
       <Header />
-      <main className="mx-auto max-w-[1320px] px-14 py-16">
+      <main className="mx-auto max-w-[1320px] px-6 md:px-14 py-16">
         <h1 className="serif text-center text-5xl text-[var(--ink)]">{collection.name}</h1>
         {collection.description && <p className="mx-auto mt-3 max-w-xl text-center text-sm text-[var(--stone)]">{collection.description}</p>}
         <div className="mt-12 grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-3">

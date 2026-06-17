@@ -21,7 +21,7 @@ export function CategoryView({
   }, [category, woodId, sort]);
 
   return (
-    <div className="mx-auto max-w-[1320px] px-14">
+    <div className="mx-auto max-w-[1320px] px-6 md:px-14">
       <div className="py-10 text-center">
         <h1 className="serif text-5xl text-[var(--ink)]">{title}</h1>
         <p className="mx-auto mt-3 max-w-xl text-sm text-[var(--stone)]">{intro}</p>

@@ -12,15 +12,15 @@ export default async function AdminCustomersPage({
   const customers = await listCustomers(q);
 
   return (
-    <main className="p-8">
-      <div className="flex items-center justify-between">
+    <main className="p-5 md:p-8">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="serif text-3xl text-[var(--ink)]">Customers</h1>
         <form method="get" className="flex items-center gap-2">
           <input
             name="q"
             defaultValue={q ?? ''}
             placeholder="Search name or email..."
-            className="w-64 border border-[var(--line)] bg-[var(--paper)] px-3 py-2 text-sm outline-none placeholder:text-[var(--stone)]"
+            className="w-full sm:w-64 border border-[var(--line)] bg-[var(--paper)] px-3 py-2 text-sm outline-none placeholder:text-[var(--stone)]"
           />
           <button
             type="submit"
@@ -39,8 +39,8 @@ export default async function AdminCustomersPage({
         </form>
       </div>
 
-      <div className="mt-6 border border-[var(--line)] bg-[var(--paper)]">
-        <table className="w-full text-sm">
+      <div className="mt-6 overflow-x-auto border border-[var(--line)] bg-[var(--paper)]">
+        <table className="w-full min-w-[640px] text-sm">
           <thead className="border-b border-[var(--line)]">
             <tr className="text-left">
               <th className="p-4 text-[10px] uppercase tracking-[0.12em] text-[var(--stone)]">Name</th>

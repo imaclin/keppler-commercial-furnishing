@@ -18,7 +18,7 @@ export default async function ProductsPage({
   const selectCls = 'h-9 border border-[var(--line)] bg-[var(--paper)] px-2 text-sm text-[var(--ink)]';
 
   return (
-    <main className="p-10">
+    <main className="p-5 md:p-10">
       <div className="flex items-center justify-between">
         <h1 className="serif text-3xl text-[var(--ink)]">Products</h1>
         <Link href="/admin/products/new" className="bg-[var(--espresso)] px-5 py-3 text-xs uppercase tracking-[0.14em] text-[#fffdfa]">+ New Product</Link>
@@ -45,7 +45,8 @@ export default async function ProductsPage({
         {hasFilters && <Link href="/admin/products" className="text-xs text-[var(--stone)] underline">Clear</Link>}
       </form>
 
-      <table className="mt-6 w-full border-collapse text-sm">
+      <div className="mt-6 overflow-x-auto">
+      <table className="w-full min-w-[600px] border-collapse text-sm">
         <thead>
           <tr className="border-b border-[var(--espresso)] text-[10px] uppercase tracking-[0.14em] text-[var(--stone)]">
             <th className="w-[64px] py-3"></th>
@@ -77,6 +78,7 @@ export default async function ProductsPage({
           {products.length === 0 && <tr><td colSpan={5} className="py-6 text-[var(--stone)]">{hasFilters ? 'No products match these filters.' : 'No products yet. Create your first piece.'}</td></tr>}
         </tbody>
       </table>
+      </div>
     </main>
   );
 }

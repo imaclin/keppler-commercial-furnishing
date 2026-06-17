@@ -10,7 +10,7 @@ export default async function CollectionsPage() {
   return (
     <>
       <Header />
-      <main className="mx-auto max-w-[1320px] px-14 py-16">
+      <main className="mx-auto max-w-[1320px] px-6 md:px-14 py-16">
         <h1 className="serif mb-10 text-center text-5xl text-[var(--ink)]">Collections</h1>
         <ul className="grid gap-8 md:grid-cols-2">
           {collections.map((c) => (

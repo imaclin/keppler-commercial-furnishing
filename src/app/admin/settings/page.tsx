@@ -14,7 +14,7 @@ export default async function AdminSettingsPage() {
   ];
 
   return (
-    <main className="p-10">
+    <main className="p-5 md:p-10">
       <h1 className="serif text-3xl text-[var(--ink)]">Settings</h1>
       <p className="mt-1 mb-8 text-sm text-[var(--stone)]">Manage your account and sign-in details.</p>
 

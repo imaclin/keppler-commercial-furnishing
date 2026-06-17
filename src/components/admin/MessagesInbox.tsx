@@ -11,8 +11,8 @@ interface Props {
 export function MessagesInbox({ threads, activeId, children }: Props) {
   return (
     <div className="flex h-full overflow-hidden">
-      {/* Left pane: conversation list */}
-      <aside className="w-[320px] shrink-0 overflow-y-auto border-r border-[var(--line)] bg-[var(--paper)]">
+      {/* Left pane: conversation list. On mobile, hidden once a thread is open. */}
+      <aside className={`${activeId ? 'hidden md:flex' : 'flex'} w-full shrink-0 flex-col overflow-y-auto border-r border-[var(--line)] bg-[var(--paper)] md:w-[320px]`}>
         <div className="border-b border-[var(--line)] px-5 py-4">
           <div className="text-[11px] uppercase tracking-[0.14em] text-[var(--stone)]">Conversations</div>
         </div>
@@ -61,8 +61,8 @@ export function MessagesInbox({ threads, activeId, children }: Props) {
         })}
       </aside>
 
-      {/* Right pane: active thread or empty state */}
-      <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-[var(--cream)]">
+      {/* Right pane: active thread or empty state. On mobile, shown only when a thread is open. */}
+      <div className={`${activeId ? 'flex' : 'hidden md:flex'} min-w-0 flex-1 flex-col overflow-hidden bg-[var(--cream)]`}>
         {children ?? (
           <div className="flex flex-1 items-center justify-center">
             <p className="text-sm text-[var(--stone)]">Select a conversation to reply.</p>

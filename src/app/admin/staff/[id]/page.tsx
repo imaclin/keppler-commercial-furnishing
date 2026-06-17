@@ -9,7 +9,7 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ id
   if (!member) notFound();
 
   return (
-    <main className="p-10">
+    <main className="p-5 md:p-10">
       <div className="mb-4 flex items-center gap-3 text-xs">
         <Link href="/admin/staff" className="text-[var(--walnut)] hover:underline">Staff</Link>
         <span className="text-[var(--stone)]">/</span>

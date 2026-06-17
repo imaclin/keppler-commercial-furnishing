@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Package, Layers, Trees, ShoppingBag, FileText, Users, MessageSquare, BarChart3,
-  PanelLeftClose, PanelLeft, Search, LogOut, Settings, ShieldCheck, Globe,
+  PanelLeftClose, PanelLeft, Search, LogOut, Settings, ShieldCheck, Globe, Menu, X,
 } from 'lucide-react';
 import { BackButton } from '@/components/BackButton';
 import { CommandPalette } from '@/components/CommandPalette';
@@ -46,6 +46,8 @@ export function AdminShell({
 }) {
   const [collapsed, setCollapsed] = useState(initialCollapsed);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
   const pathname = usePathname();
 
   const navItems: CommandItem[] = useMemo(
@@ -53,11 +55,25 @@ export function AdminShell({
     [],
   );
 
+  // Only collapse to icons on desktop; the mobile drawer always shows labels.
+  const compact = isDesktop && collapsed;
+
   function toggle() {
     const next = !collapsed;
     setCollapsed(next);
     document.cookie = `hw_admin_nav=${next ? 'collapsed' : 'open'}; path=/; max-age=31536000`;
   }
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px)');
+    const update = () => setIsDesktop(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+
+  // Close the mobile drawer whenever the route changes.
+  useEffect(() => { setMobileOpen(false); }, [pathname]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -74,24 +90,35 @@ export function AdminShell({
 
   return (
     <div className="flex h-screen overflow-hidden bg-[var(--cream)]">
-      <aside className={`${collapsed ? 'w-[64px]' : 'w-[248px]'} flex h-screen shrink-0 flex-col bg-[var(--espresso)] text-[#cdbfaf] transition-[width] duration-200`}>
-        <div className={`flex items-center ${collapsed ? 'justify-center' : 'justify-between px-6'} h-[64px] shrink-0`}>
-          {!collapsed && <span className="serif text-2xl tracking-[0.2em] text-[#fffdfa]">HW</span>}
-          <button onClick={toggle} aria-label="Toggle sidebar" className="text-[#cdbfaf] hover:text-white">
-            {collapsed ? <PanelLeft className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
+      {/* Mobile backdrop */}
+      {mobileOpen && <div className="fixed inset-0 z-40 bg-black/40 md:hidden" onClick={() => setMobileOpen(false)} />}
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-[248px] shrink-0 flex-col bg-[var(--espresso)] text-[#cdbfaf] transition-transform duration-200 md:static md:z-auto md:translate-x-0 md:transition-[width] ${
+          mobileOpen ? 'translate-x-0' : '-translate-x-full'
+        } ${compact ? 'md:w-[64px]' : 'md:w-[248px]'}`}
+      >
+        <div className={`flex items-center ${compact ? 'justify-center' : 'justify-between px-6'} h-[64px] shrink-0`}>
+          {!compact && <span className="serif text-2xl tracking-[0.2em] text-[#fffdfa]">HW</span>}
+          <button
+            onClick={() => (isDesktop ? toggle() : setMobileOpen(false))}
+            aria-label="Toggle sidebar"
+            className="text-[#cdbfaf] hover:text-white"
+          >
+            {!isDesktop ? <X className="h-5 w-5" /> : compact ? <PanelLeft className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
           </button>
         </div>
         <nav className="mt-2 flex-1 overflow-y-auto">
           {GROUPS.map((g) => (
             <div key={g.title} className="mb-4">
-              {!collapsed && <div className="px-6 pb-1 text-[9.5px] uppercase tracking-[0.2em] text-[#7d7160]">{g.title}</div>}
+              {!compact && <div className="px-6 pb-1 text-[9.5px] uppercase tracking-[0.2em] text-[#7d7160]">{g.title}</div>}
               {g.items.map((it) => {
                 const active = isActive(it.href);
                 const Icon = it.icon;
                 return (
-                  <Link key={it.href} href={it.href} title={collapsed ? it.label : undefined}
-                    className={`flex items-center gap-3 ${collapsed ? 'justify-center px-0' : 'px-6'} py-2.5 text-sm ${active ? 'bg-white/6 text-[#fffdfa] border-l-2 border-[var(--walnut)]' : 'text-[#c9bca9] hover:text-[#fffdfa]'}`}>
-                    <Icon className="h-[18px] w-[18px] shrink-0" />{!collapsed && <span>{it.label}</span>}
+                  <Link key={it.href} href={it.href} title={compact ? it.label : undefined}
+                    className={`flex items-center gap-3 ${compact ? 'justify-center px-0' : 'px-6'} py-2.5 text-sm ${active ? 'bg-white/6 text-[#fffdfa] border-l-2 border-[var(--walnut)]' : 'text-[#c9bca9] hover:text-[#fffdfa]'}`}>
+                    <Icon className="h-[18px] w-[18px] shrink-0" />{!compact && <span>{it.label}</span>}
                   </Link>
                 );
               })}
@@ -101,7 +128,7 @@ export function AdminShell({
 
         {/* Account footer: signed-in email + settings + sign out */}
         <div className="mt-auto shrink-0 border-t border-white/10 py-3">
-          {collapsed ? (
+          {compact ? (
             <Link href="/admin/settings" title="Settings" className="flex justify-center py-2 text-[#c9bca9] hover:text-[#fffdfa]">
               <Settings className="h-[18px] w-[18px]" />
             </Link>
@@ -114,29 +141,34 @@ export function AdminShell({
             </div>
           )}
           <form action="/auth/signout" method="post">
-            <button title={collapsed ? 'Sign out' : undefined}
-              className={`flex w-full items-center gap-3 ${collapsed ? 'justify-center px-0' : 'px-6'} py-2.5 text-sm text-[#c9bca9] hover:text-[#fffdfa]`}>
-              <LogOut className="h-[18px] w-[18px] shrink-0" />{!collapsed && <span className="uppercase tracking-[0.12em] text-xs">Sign out</span>}
+            <button title={compact ? 'Sign out' : undefined}
+              className={`flex w-full items-center gap-3 ${compact ? 'justify-center px-0' : 'px-6'} py-2.5 text-sm text-[#c9bca9] hover:text-[#fffdfa]`}>
+              <LogOut className="h-[18px] w-[18px] shrink-0" />{!compact && <span className="uppercase tracking-[0.12em] text-xs">Sign out</span>}
             </button>
           </form>
         </div>
       </aside>
 
       <div className="flex h-screen min-w-0 flex-1 flex-col">
-        <header className="grid h-[64px] shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-[var(--line)] bg-[var(--paper)] px-6">
-          <div className="justify-self-start">
+        <header className="flex h-[64px] shrink-0 items-center gap-3 border-b border-[var(--line)] bg-[var(--paper)] px-4 sm:px-6">
+          <button onClick={() => setMobileOpen(true)} aria-label="Open menu" className="text-[var(--ink)] md:hidden">
+            <Menu className="h-5 w-5" />
+          </button>
+          <div className="hidden md:block">
             <BackButton fallback="/admin" />
           </div>
           <button
             onClick={() => setPaletteOpen(true)}
-            className="flex w-[min(28rem,60vw)] items-center gap-2 rounded-md border border-[var(--line)] bg-[var(--cream)] px-3 py-2 text-sm text-[var(--stone)] hover:border-[var(--stone)]"
+            className="flex flex-1 items-center gap-2 rounded-md border border-[var(--line)] bg-[var(--cream)] px-3 py-2 text-sm text-[var(--stone)] hover:border-[var(--stone)] md:flex-none md:w-[min(28rem,50vw)]"
           >
-            <Search className="h-4 w-4" />
+            <Search className="h-4 w-4 shrink-0" />
             <span>Search...</span>
-            <kbd className="ml-auto rounded border border-[var(--line)] bg-[var(--paper)] px-1.5 py-0.5 text-[10px]">⌘K</kbd>
+            <kbd className="ml-auto hidden rounded border border-[var(--line)] bg-[var(--paper)] px-1.5 py-0.5 text-[10px] sm:inline">⌘K</kbd>
           </button>
-          <div className="justify-self-end">
-            <Notifications counts={attention} />
+          <div className="ml-auto md:ml-0 md:flex-1 md:justify-self-end md:text-right">
+            <div className="flex justify-end">
+              <Notifications counts={attention} />
+            </div>
           </div>
         </header>
         <div className="min-w-0 flex-1 overflow-y-auto">{children}</div>

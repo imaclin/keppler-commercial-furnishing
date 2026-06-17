@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 export default async function WoodsPage() {
   const [woods, finishes] = await Promise.all([listWoods(), listFinishes()]);
   return (
-    <main className="p-10">
+    <main className="p-5 md:p-10">
       <h1 className="serif text-3xl text-[var(--ink)]">Wood &amp; Finishes</h1>
       <div className="mt-8 grid grid-cols-1 gap-10 md:grid-cols-2">
         <section>

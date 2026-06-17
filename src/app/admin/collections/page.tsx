@@ -6,7 +6,7 @@ import { NewCollectionModal } from '@/components/admin/NewCollectionModal';
 export default async function CollectionsPage() {
   const collections = await listCollectionsWithCounts();
   return (
-    <main className="p-10">
+    <main className="p-5 md:p-10">
       <div className="flex items-center justify-between">
         <h1 className="serif text-3xl text-[var(--ink)]">Collections</h1>
         <NewCollectionModal />

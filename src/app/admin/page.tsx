@@ -33,7 +33,7 @@ export default async function AdminDashboard() {
   const periodLabel = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
   return (
-    <main className="p-8">
+    <main className="p-5 md:p-8">
       {/* Header */}
       <div className="flex items-baseline gap-4 mb-8">
         <h1 className="serif text-4xl text-[var(--ink)]">Overview</h1>

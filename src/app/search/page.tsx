@@ -9,7 +9,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   return (
     <>
       <Header />
-      <main className="mx-auto max-w-[1320px] px-14 py-16">
+      <main className="mx-auto max-w-[1320px] px-6 md:px-14 py-16">
         <h1 className="serif text-3xl text-[var(--ink)]">Search</h1>
         <form action="/search" className="mt-4 max-w-md">
           <input name="q" defaultValue={q ?? ''} placeholder="Search the collection..." className="w-full border-b border-[var(--ink)] bg-transparent py-2 outline-none" />

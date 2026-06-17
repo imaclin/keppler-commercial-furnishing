@@ -10,7 +10,7 @@ export default async function AdminOrdersPage({
   const rows = await listOrdersForAdminRich({ status, q });
 
   return (
-    <main className="p-8">
+    <main className="p-5 md:p-8">
       <h1 className="serif text-3xl text-[var(--ink)]">Orders</h1>
       <div className="mt-6">
         <OrdersTable rows={rows} status={status} q={q} />

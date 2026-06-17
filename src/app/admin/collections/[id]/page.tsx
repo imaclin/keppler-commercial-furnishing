@@ -22,7 +22,7 @@ export default async function CollectionDetailPage({ params }: { params: Promise
   }));
 
   return (
-    <main className="p-10">
+    <main className="p-5 md:p-10">
       <div className="mb-1 flex items-center gap-3 text-xs">
         <Link href="/admin/collections" className="text-[var(--walnut)] hover:underline">Collections</Link>
         <span className="text-[var(--stone)]">/</span>
