@@ -48,14 +48,19 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
   const email = String(formData.get('email') ?? '').trim().toLowerCase();
   const password = String(formData.get('password') ?? '');
   if (!email || !password) return { error: 'Email and password are required.' };
+  let role = 'customer';
   try {
-    const user = await queryOne<User>('select id, password_hash from users where email = $1', [email]);
+    const user = await queryOne<User & { role: string }>(
+      'select u.id, u.password_hash, p.role from users u join profiles p on p.id = u.id where u.email = $1',
+      [email],
+    );
     if (!user || !(await bcrypt.compare(password, user.password_hash))) {
       return { error: 'Invalid email or password.' };
     }
+    role = user.role;
     await createSession(user.id);
   } catch {
     return { error: 'Something went wrong. Please try again.' };
   }
-  redirect('/account');
+  redirect(role === 'staff' || role === 'admin' ? '/admin' : '/account');
 }
