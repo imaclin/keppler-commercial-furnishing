@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", weight: ["30
 const cormorant = Cormorant_Garamond({ subsets: ["latin"], variable: "--font-cormorant", weight: ["400", "500", "600"] });
 
 export const metadata: Metadata = {
-  title: "HW | Heirloom Woodwork",
+  title: "HW",
   description: "Handcrafted American solid-wood furniture, built to be handed down.",
 };
 

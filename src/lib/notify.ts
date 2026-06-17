@@ -1,6 +1,6 @@
 import { Resend } from 'resend';
 
-const FROM = process.env.HW_EMAIL_FROM ?? 'HW <noreply@heirloomwoodwork.test>';
+const FROM = process.env.HW_EMAIL_FROM ?? 'HW <noreply@hw.test>';
 
 export function emailEnabled(): boolean {
   return Boolean(process.env.RESEND_API_KEY);

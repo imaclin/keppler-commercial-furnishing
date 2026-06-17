@@ -13,7 +13,7 @@ export function Footer() {
         <div>
           <div className="serif text-3xl tracking-[0.18em] text-[#fffdfa]">HW</div>
           <p className="mt-4 max-w-[280px] text-[12.5px] leading-relaxed text-[#b4a895]">
-            Heirloom Woodwork. Solid-wood tables and chairs, handcrafted to order in America and built to be handed down.
+            HW. Solid-wood tables and chairs, handcrafted to order in America and built to be handed down.
           </p>
         </div>
         {COLS.map((c) => (
@@ -24,7 +24,7 @@ export function Footer() {
         ))}
       </div>
       <div className="mx-auto mt-12 max-w-[1320px] border-t border-white/10 pt-6 text-[11px] tracking-[0.06em] text-[#9a8e7c]">
-        &copy; {new Date().getFullYear()} HW, Heirloom Woodwork, LLC
+        &copy; {new Date().getFullYear()} HW
       </div>
     </footer>
   );

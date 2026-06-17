@@ -16,7 +16,6 @@ export function Header() {
         </nav>
         <Link href="/" className="text-center">
           <span className="serif block text-4xl font-semibold tracking-[0.18em] text-[var(--espresso)] leading-none">HW</span>
-          <span className="block text-[8.5px] uppercase tracking-[0.42em] text-[var(--stone)] mt-1">Heirloom Woodwork</span>
         </Link>
         <nav aria-label="Utility" className="flex justify-end gap-6 text-xs uppercase tracking-[0.13em]">
           <Link href="/search" className="text-[var(--ink)]">Search</Link>

@@ -23,7 +23,7 @@ export default async function HomePage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/brand/hero.png"
-            alt="HW Heirloom Woodwork hero"
+            alt="HW hero"
             className="h-full w-full object-cover"
             style={{ filter: 'saturate(0.96) brightness(0.97)' }}
           />
