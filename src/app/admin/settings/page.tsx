@@ -18,7 +18,7 @@ export default async function AdminSettingsPage() {
       <h1 className="serif text-3xl text-[var(--ink)]">Settings</h1>
       <p className="mt-1 mb-8 text-sm text-[var(--stone)]">Manage your account and sign-in details.</p>
 
-      <div className="max-w-2xl space-y-8">
+      <div className="space-y-8">
         <Section title="Account" rows={accountRows} />
         <Section title="Security" rows={securityRows} />
       </div>

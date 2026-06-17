@@ -28,22 +28,24 @@ export default async function AdminQuotesPage() {
         </thead>
         <tbody>
           {quotes.map((q) => (
-            <tr key={q.id} className="border-b border-[var(--line)]">
-              <td className="py-3 font-medium text-[var(--ink)]">{q.customer_name}</td>
-              <td className="text-[var(--stone)]">{q.item_count}</td>
-              <td>{q.total_cents > 0 ? formatPriceCents(q.total_cents) : <span className="text-[var(--stone)]">Unpriced</span>}</td>
+            <tr key={q.id} className="border-b border-[var(--line)] hover:bg-[var(--bone)]/50">
+              <td className="py-3 font-medium text-[var(--ink)]"><Link href={`/admin/quotes/${q.id}`} className="hover:underline">{q.customer_name}</Link></td>
+              <td className="text-[var(--stone)]"><Link href={`/admin/quotes/${q.id}`} className="block">{q.item_count}</Link></td>
+              <td><Link href={`/admin/quotes/${q.id}`} className="block">{q.total_cents > 0 ? formatPriceCents(q.total_cents) : <span className="text-[var(--stone)]">Unpriced</span>}</Link></td>
               <td>
-                <span className={`rounded px-2 py-0.5 text-[11px] uppercase tracking-[0.12em] capitalize ${STATUS_COLORS[q.status] ?? 'bg-[var(--bone)] text-[var(--ink)]'}`}>
-                  {q.status.replaceAll('_', ' ')}
-                </span>
+                <Link href={`/admin/quotes/${q.id}`} className="block">
+                  <span className={`rounded px-2 py-0.5 text-[11px] uppercase tracking-[0.12em] capitalize ${STATUS_COLORS[q.status] ?? 'bg-[var(--bone)] text-[var(--ink)]'}`}>
+                    {q.status.replaceAll('_', ' ')}
+                  </span>
+                </Link>
               </td>
               <td className="text-[var(--stone)]">
-                {new Date(q.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-              </td>
-              <td>
-                <Link href={`/admin/quotes/${q.id}`} className="text-xs text-[var(--walnut)] hover:underline">
-                  Review
+                <Link href={`/admin/quotes/${q.id}`} className="block">
+                  {new Date(q.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </Link>
+              </td>
+              <td className="text-right">
+                <Link href={`/admin/quotes/${q.id}`} className="text-xs text-[var(--walnut)] hover:underline">View →</Link>
               </td>
             </tr>
           ))}

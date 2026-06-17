@@ -41,12 +41,18 @@ export async function listQuotesForAdmin(): Promise<(Quote & { customer_name: st
   );
 }
 
-export async function getQuoteForAdmin(id: string): Promise<(Quote & { customer_name: string; items: QuoteItem[] }) | null> {
-  const quote = await queryOne<Quote & { customer_name: string }>(
-    'select q.*, pr.name as customer_name from quotes q join profiles pr on pr.id = q.customer_id where q.id = $1', [id],
+export type AdminQuoteItem = QuoteItem & { image_url: string | null };
+export async function getQuoteForAdmin(id: string): Promise<(Quote & { customer_name: string; customer_email: string; items: AdminQuoteItem[] }) | null> {
+  const quote = await queryOne<Quote & { customer_name: string; customer_email: string }>(
+    `select q.*, pr.name as customer_name, u.email as customer_email
+       from quotes q join profiles pr on pr.id = q.customer_id join users u on u.id = pr.id
+      where q.id = $1`, [id],
   );
   if (!quote) return null;
-  const items = await query<QuoteItem>('select * from quote_items where quote_id = $1', [id]);
+  const items = await query<AdminQuoteItem>(
+    `select qi.*, (select url from product_images i where i.product_id = qi.product_id order by i.sort_order limit 1) as image_url
+       from quote_items qi where qi.quote_id = $1`, [id],
+  );
   return { ...quote, items };
 }
 
