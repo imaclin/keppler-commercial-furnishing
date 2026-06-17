@@ -1,12 +1,9 @@
+import { cookies } from 'next/headers';
 import { requireStaff } from '@/lib/auth';
-import { AdminSidebar } from '@/components/admin/AdminSidebar';
+import { AdminShell } from '@/components/admin/AdminShell';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const profile = await requireStaff();
-  return (
-    <div className="flex min-h-screen bg-[var(--cream)]">
-      <AdminSidebar email={profile.email} />
-      <div className="flex-1">{children}</div>
-    </div>
-  );
+  const collapsed = (await cookies()).get('hw_admin_nav')?.value === 'collapsed';
+  return <AdminShell email={profile.email} initialCollapsed={collapsed}>{children}</AdminShell>;
 }
