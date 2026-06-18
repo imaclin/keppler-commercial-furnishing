@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Clock, Truck, ShieldCheck } from 'lucide-react';
 import { computeConfiguredPriceCents } from '@/lib/pricing';
 import { formatPriceCents } from '@/lib/format';
-import { QuoteRequestForm } from '@/components/storefront/QuoteRequestForm';
+import { AddToCartButton } from '@/components/storefront/AddToCartButton';
 import { FavoriteButton } from '@/components/storefront/FavoriteButton';
 import { SampleRequestForm } from '@/components/storefront/SampleRequestForm';
 import type { StorefrontProduct } from '@/lib/types';
@@ -24,20 +24,6 @@ export function ProductConfigurator({ product, initialFavorited, isLoggedIn = fa
     finishDelta: finish?.price_delta_cents ?? 0,
     sizeDelta: size?.price_delta_cents ?? 0,
   });
-  const configuration = {
-    product: product.name, wood: wood?.name ?? null, finish: finish?.name ?? null,
-    size: size?.label ?? null, price: formatPriceCents(price),
-  };
-  const quoteItem = {
-    productId: product.id,
-    title: product.name,
-    woodName: wood?.name ?? null,
-    finishName: finish?.name ?? null,
-    sizeLabel: size?.label ?? null,
-    unitPriceCents: price,
-    configuration,
-  };
-
   return (
     <div className="grid gap-12 md:grid-cols-2">
       <div>
@@ -100,7 +86,20 @@ export function ProductConfigurator({ product, initialFavorited, isLoggedIn = fa
         )}
 
         <div className="mt-8 space-y-3">
-          <QuoteRequestForm key={`${woodId}-${finishId}-${sizeId}`} productId={product.id} configuration={configuration} isLoggedIn={isLoggedIn} quoteItem={quoteItem} />
+          <AddToCartButton
+            key={`${woodId}-${finishId}-${sizeId}`}
+            item={{
+              key: `${product.id}|${woodId}|${finishId}|${sizeId}`,
+              productId: product.id,
+              slug: product.slug,
+              title: product.name,
+              image: product.images[0]?.url ?? null,
+              woodName: wood?.name ?? null,
+              finishName: finish?.name ?? null,
+              sizeLabel: size?.label ?? null,
+              unitPriceCents: price,
+            }}
+          />
           <FavoriteButton productId={product.id} initialFavorited={initialFavorited} />
         </div>
         <SampleRequestForm productId={product.id} woodId={woodId || null} finishId={finishId || null} />

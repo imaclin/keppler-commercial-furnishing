@@ -16,9 +16,10 @@ interface Props {
   items: QuoteItem[];
   initialValidUntil?: string | null;
   initialNotes?: string | null;
+  initialPaymentLink?: string | null;
 }
 
-export function QuotePricingForm({ quoteId, status, customerName, items, initialValidUntil, initialNotes }: Props) {
+export function QuotePricingForm({ quoteId, status, customerName, items, initialValidUntil, initialNotes, initialPaymentLink }: Props) {
   const editable = status === 'requested' || status === 'sent';
 
   const [prices, setPrices] = useState<Record<string, string>>(() => {
@@ -30,6 +31,7 @@ export function QuotePricingForm({ quoteId, status, customerName, items, initial
   });
   const [validUntil, setValidUntil] = useState(initialValidUntil ?? '');
   const [notes, setNotes] = useState(initialNotes ?? '');
+  const [paymentLink, setPaymentLink] = useState(initialPaymentLink ?? '');
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -54,7 +56,7 @@ export function QuotePricingForm({ quoteId, status, customerName, items, initial
     const priceMap = buildPriceMap();
     if (!priceMap) return;
     setBusy(true);
-    const result = await sendQuoteAction(quoteId, priceMap, validUntil || null, notes.trim() || null);
+    const result = await sendQuoteAction(quoteId, priceMap, validUntil || null, notes.trim() || null, paymentLink.trim() || null);
     setBusy(false);
     if ('error' in result) setError(result.error);
     else { setPreviewOpen(false); setSent(true); }
@@ -68,8 +70,8 @@ export function QuotePricingForm({ quoteId, status, customerName, items, initial
   if (sent) {
     return (
       <div className="rounded border border-[var(--line)] bg-[var(--paper)] p-6">
-        <div className="text-sm font-medium text-[var(--walnut)]">Quote sent to customer.</div>
-        <p className="mt-1 text-sm text-[var(--stone)]">The customer has been notified and can now accept or decline.</p>
+        <div className="text-sm font-medium text-[var(--walnut)]">Invoice sent to customer.</div>
+        <p className="mt-1 text-sm text-[var(--stone)]">The customer has been notified and can now pay or accept it from their account.</p>
       </div>
     );
   }
@@ -122,7 +124,7 @@ export function QuotePricingForm({ quoteId, status, customerName, items, initial
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div>
             <Label htmlFor="valid-until" className="text-[10px] uppercase tracking-[0.1em] text-[var(--stone)]">Valid Until</Label>
             <Input
@@ -131,6 +133,18 @@ export function QuotePricingForm({ quoteId, status, customerName, items, initial
               value={validUntil}
               onChange={(e) => setValidUntil(e.target.value)}
               disabled={!editable || busy}
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label htmlFor="payment-link" className="text-[10px] uppercase tracking-[0.1em] text-[var(--stone)]">Payment Link (optional)</Label>
+            <Input
+              id="payment-link"
+              type="url"
+              value={paymentLink}
+              onChange={(e) => setPaymentLink(e.target.value)}
+              disabled={!editable || busy}
+              placeholder="https://buy.stripe.com/..."
               className="mt-1"
             />
           </div>
@@ -153,10 +167,10 @@ export function QuotePricingForm({ quoteId, status, customerName, items, initial
 
         <div className="flex flex-wrap items-center gap-3">
           <Button type="button" variant="outline" onClick={openPreview} disabled={!editable || busy}>
-            Preview quote
+            Preview invoice
           </Button>
           <Button type="submit" disabled={!editable || busy} className="bg-[var(--espresso)] text-[#fffdfa] hover:bg-[var(--walnut)]">
-            {busy ? 'Sending...' : 'Price and Send Quote'}
+            {busy ? 'Sending...' : 'Create & Send Invoice'}
           </Button>
         </div>
       </form>
@@ -166,9 +180,9 @@ export function QuotePricingForm({ quoteId, status, customerName, items, initial
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setPreviewOpen(false)} />
           <div className="relative flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--paper)] shadow-2xl">
             <div className="shrink-0 border-b border-[var(--line)] px-6 py-4">
-              <div className="text-[8px] uppercase tracking-[0.4em] text-[var(--stone)]">Quote preview</div>
+              <div className="text-[8px] uppercase tracking-[0.4em] text-[var(--stone)]">Invoice preview</div>
               <h2 className="serif text-2xl text-[var(--ink)]">For {customerName}</h2>
-              <p className="text-xs text-[var(--stone)]">This is how the quote will appear to the customer.</p>
+              <p className="text-xs text-[var(--stone)]">This is how the invoice will appear to the customer.</p>
             </div>
 
             <div className="flex-1 overflow-y-auto px-6 py-5">
@@ -209,7 +223,7 @@ export function QuotePricingForm({ quoteId, status, customerName, items, initial
             <div className="flex shrink-0 justify-end gap-3 border-t border-[var(--line)] px-6 py-4">
               <Button type="button" variant="outline" onClick={() => setPreviewOpen(false)} disabled={busy}>Keep editing</Button>
               <Button type="button" onClick={doSend} disabled={busy} className="bg-[var(--espresso)] text-[#fffdfa] hover:bg-[var(--walnut)]">
-                {busy ? 'Sending...' : 'Send quote'}
+                {busy ? 'Sending...' : 'Send Invoice'}
               </Button>
             </div>
           </div>

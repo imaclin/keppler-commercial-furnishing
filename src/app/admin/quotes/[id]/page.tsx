@@ -42,7 +42,7 @@ export default async function AdminQuoteDetailPage({ params }: { params: Promise
       </p>
 
       <section className="mt-8 max-w-3xl">
-        <div className="text-[8px] uppercase tracking-[0.4em] text-[var(--stone)] mb-6">Price and Send</div>
+        <div className="text-[8px] uppercase tracking-[0.4em] text-[var(--stone)] mb-6">Create Invoice</div>
         <QuotePricingForm
           quoteId={id}
           status={quote.status}
@@ -50,6 +50,7 @@ export default async function AdminQuoteDetailPage({ params }: { params: Promise
           items={quote.items}
           initialValidUntil={quote.valid_until}
           initialNotes={quote.notes}
+          initialPaymentLink={quote.payment_link_url}
         />
       </section>
 

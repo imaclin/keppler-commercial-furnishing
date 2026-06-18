@@ -22,6 +22,33 @@ export async function createQuoteFromConfig(customerId: string, item: {
   });
 }
 
+export type CartQuoteItem = {
+  productId: string | null; title: string; woodName: string | null; finishName: string | null;
+  sizeLabel: string | null; unitPriceCents: number; quantity: number; configuration: Record<string, unknown> | null;
+};
+
+// Create a single quote request from a cart of configured items.
+export async function createQuoteFromItems(customerId: string, items: CartQuoteItem[]): Promise<string> {
+  return transaction(async (client) => {
+    const subtotal = items.reduce((s, i) => s + i.unitPriceCents * Math.max(1, i.quantity), 0);
+    const { rows } = await client.query(
+      `insert into quotes (customer_id, status, subtotal_cents, total_cents)
+       values ($1, 'requested', $2, $2) returning id`,
+      [customerId, subtotal],
+    );
+    const id = rows[0].id as string;
+    for (const it of items) {
+      await client.query(
+        `insert into quote_items (quote_id, product_id, title_snapshot, wood_name, finish_name, size_label, quantity, unit_price_cents, configuration_json)
+         values ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+        [id, it.productId, it.title, it.woodName, it.finishName, it.sizeLabel, Math.max(1, it.quantity), it.unitPriceCents,
+         it.configuration ? JSON.stringify(it.configuration) : null],
+      );
+    }
+    return id;
+  });
+}
+
 export async function listQuotesForCustomer(customerId: string): Promise<Quote[]> {
   return query<Quote>('select * from quotes where customer_id = $1 order by created_at desc', [customerId]);
 }
@@ -57,7 +84,7 @@ export async function getQuoteForAdmin(id: string): Promise<(Quote & { customer_
 }
 
 // Staff: set per-item prices, valid-until, notes, mark sent. prices keyed by quote_item id.
-export async function priceAndSendQuote(quoteId: string, prices: Record<string, number>, validUntil: string | null, notes: string | null): Promise<void> {
+export async function priceAndSendQuote(quoteId: string, prices: Record<string, number>, validUntil: string | null, notes: string | null, paymentLinkUrl: string | null = null): Promise<void> {
   await transaction(async (client) => {
     const { rows: qrows } = await client.query('select status from quotes where id = $1 for update', [quoteId]);
     if (!qrows[0] || !['requested', 'sent'].includes(qrows[0].status as string)) {
@@ -72,8 +99,8 @@ export async function priceAndSendQuote(quoteId: string, prices: Record<string, 
       await client.query('update quote_items set unit_price_cents = $2 where id = $1', [it.id, unit]);
     }
     await client.query(
-      `update quotes set subtotal_cents = $2, total_cents = $2, valid_until = $3, notes = $4, status = 'sent' where id = $1`,
-      [quoteId, subtotal, validUntil, notes],
+      `update quotes set subtotal_cents = $2, total_cents = $2, valid_until = $3, notes = $4, payment_link_url = $5, status = 'sent' where id = $1`,
+      [quoteId, subtotal, validUntil, notes, paymentLinkUrl],
     );
   });
 }

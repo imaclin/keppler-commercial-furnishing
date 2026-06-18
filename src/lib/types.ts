@@ -72,7 +72,7 @@ export type QuoteItem = {
 };
 export type Quote = {
   id: string; customer_id: string; status: QuoteStatus; subtotal_cents: number; total_cents: number;
-  valid_until: string | null; notes: string | null; created_at: string;
+  valid_until: string | null; notes: string | null; payment_link_url: string | null; created_at: string;
 };
 export type OrderItem = Omit<QuoteItem, 'quote_id'> & { order_id: string };
 export type Order = {

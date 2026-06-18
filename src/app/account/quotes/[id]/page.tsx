@@ -63,8 +63,23 @@ export default async function QuoteDetailPage({ params }: { params: Promise<{ id
       )}
 
       {quote.status === 'sent' && (
-        <div className="mt-8">
+        <div className="mt-8 space-y-4">
+          {quote.payment_link_url && (
+            <a
+              href={quote.payment_link_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full bg-[var(--espresso)] px-6 py-4 text-center text-[12px] uppercase tracking-[0.18em] text-[#fffdfa] hover:bg-[var(--walnut)]"
+            >
+              Pay Invoice — {formatPriceCents(quote.total_cents)}
+            </a>
+          )}
           <QuoteAcceptButton quoteId={id} />
+          <p className="text-center text-xs text-[var(--stone)]">
+            {quote.payment_link_url
+              ? 'Pay securely online, or accept to confirm your order and arrange payment with our team.'
+              : 'Accept to confirm your order. Our team will follow up with payment details.'}
+          </p>
         </div>
       )}
     </main>

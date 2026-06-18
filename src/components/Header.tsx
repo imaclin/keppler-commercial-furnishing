@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Search, CalendarDays, User } from 'lucide-react';
+import { Menu, X, Search, CalendarDays, User, ShoppingBag } from 'lucide-react';
+import { useCart } from '@/lib/cart';
 
 const NAV = [
   { href: '/tables', label: 'Tables' },
@@ -19,6 +20,9 @@ const UTIL = [
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { count } = useCart();
+  useEffect(() => setMounted(true), []);
   return (
     <header className="border-b border-[var(--line)] bg-[var(--paper)]">
       <div className="mx-auto grid max-w-[1320px] grid-cols-[1fr_auto_1fr] items-center px-5 h-[72px] md:px-14 md:h-[86px]">
@@ -44,6 +48,12 @@ export function Header() {
               </Link>
             );
           })}
+          <Link href="/cart" aria-label="Cart" title="Cart" className="relative text-[var(--ink)] hover:text-[var(--walnut)]">
+            <ShoppingBag className="h-[19px] w-[19px]" strokeWidth={1.6} />
+            {mounted && count > 0 && (
+              <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--walnut)] px-1 text-[10px] font-semibold text-[#fffdfa]">{count}</span>
+            )}
+          </Link>
         </nav>
       </div>
 
