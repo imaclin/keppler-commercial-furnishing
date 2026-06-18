@@ -1,9 +1,27 @@
 import Link from 'next/link';
 
 const COLS = [
-  { h: 'Our Company', links: ['About HW', 'Our Builders', 'Craftsmanship', 'Sustainability', 'Contact'] },
-  { h: 'Customer Care', links: ['Order Status', 'Care Guide', 'Warranty', 'Returns & Exchanges', 'Delivery'] },
-  { h: 'Resources', links: ['FAQ', 'Design Consultation', 'Order a Sample', 'Trade & Business', 'Financing'] },
+  { h: 'Our Company', links: [
+    { label: 'About HW', href: '/about' },
+    { label: 'Our Builders', href: '/our-builders' },
+    { label: 'Craftsmanship', href: '/our-craft' },
+    { label: 'Sustainability', href: '/sustainability' },
+    { label: 'Contact', href: '/contact' },
+  ] },
+  { h: 'Customer Care', links: [
+    { label: 'Order Status', href: '/order-status' },
+    { label: 'Care Guide', href: '/care-guide' },
+    { label: 'Warranty', href: '/warranty' },
+    { label: 'Returns & Exchanges', href: '/returns' },
+    { label: 'Delivery', href: '/delivery' },
+  ] },
+  { h: 'Resources', links: [
+    { label: 'FAQ', href: '/faq' },
+    { label: 'Design Consultation', href: '/consultation' },
+    { label: 'Order a Sample', href: '/order-a-sample' },
+    { label: 'Trade & Business', href: '/trade' },
+    { label: 'Financing', href: '/financing' },
+  ] },
 ];
 
 export function Footer() {
@@ -19,7 +37,7 @@ export function Footer() {
         {COLS.map((c) => (
           <div key={c.h}>
             <h4 className="mb-4 text-[11px] uppercase tracking-[0.2em] text-[#fffdfa]">{c.h}</h4>
-            {c.links.map((l) => <Link key={l} href="#" className="block text-[13px] leading-[2.3] text-[#c3b8a6]">{l}</Link>)}
+            {c.links.map((l) => <Link key={l.href} href={l.href} className="block text-[13px] leading-[2.3] text-[#c3b8a6] hover:text-[#fffdfa]">{l.label}</Link>)}
           </div>
         ))}
       </div>
