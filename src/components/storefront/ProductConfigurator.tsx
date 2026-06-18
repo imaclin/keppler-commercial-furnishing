@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Clock, Truck, ShieldCheck } from 'lucide-react';
 import { computeConfiguredPriceCents } from '@/lib/pricing';
 import { formatPriceCents } from '@/lib/format';
 import { QuoteRequestForm } from '@/components/storefront/QuoteRequestForm';
@@ -103,7 +104,22 @@ export function ProductConfigurator({ product, initialFavorited, isLoggedIn = fa
           <FavoriteButton productId={product.id} initialFavorited={initialFavorited} />
         </div>
         <SampleRequestForm productId={product.id} woodId={woodId || null} finishId={finishId || null} />
-        {product.story && <p className="mt-8 border-t border-[var(--line)] pt-6 text-sm leading-relaxed text-[var(--ink)]">{product.story}</p>}
+
+        {product.short_description && (
+          <p className="mt-8 border-t border-[var(--line)] pt-6 text-sm leading-relaxed text-[var(--ink)]">{product.short_description}</p>
+        )}
+
+        <div className="mt-6 grid grid-cols-1 gap-3 border-t border-[var(--line)] pt-6 sm:grid-cols-3">
+          {[
+            { icon: Clock, label: 'Made to order' },
+            { icon: Truck, label: 'White-glove delivery' },
+            { icon: ShieldCheck, label: 'Lifetime warranty' },
+          ].map((b) => (
+            <div key={b.label} className="flex items-center gap-2 text-[12px] text-[var(--stone)]">
+              <b.icon className="h-4 w-4 shrink-0 text-[var(--walnut)]" strokeWidth={1.6} /> {b.label}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
