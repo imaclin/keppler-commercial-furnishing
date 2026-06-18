@@ -42,19 +42,21 @@ export default async function HomePage() {
               <p className="mt-[22px] mb-[34px] max-w-[430px] text-base leading-[1.7] font-light" style={{ color: 'rgba(255,253,250,0.9)' }}>
                 Solid-wood tables and chairs, made to order by master craftsmen and finished by hand. No particle board, no shortcuts, no compromise.
               </p>
-              <Link
-                href="/tables"
-                className="inline-block bg-[#fffdfa] px-[34px] py-[16px] text-[12px] uppercase tracking-[0.2em] font-medium text-[var(--espresso)] no-underline"
-              >
-                Explore the Collection
-              </Link>
-              <Link
-                href="/consultation"
-                className="ml-[14px] inline-block border border-[rgba(255,253,250,0.7)] px-[34px] py-[16px] text-[12px] uppercase tracking-[0.2em] font-medium no-underline"
-                style={{ color: '#fffdfa' }}
-              >
-                Book a Consultation
-              </Link>
+              <div className="flex flex-col gap-3 sm:flex-row sm:gap-[14px]">
+                <Link
+                  href="/tables"
+                  className="block bg-[#fffdfa] px-[34px] py-[16px] text-center text-[12px] uppercase tracking-[0.2em] font-medium text-[var(--espresso)] no-underline sm:inline-block"
+                >
+                  Explore the Collection
+                </Link>
+                <Link
+                  href="/consultation"
+                  className="block border border-[rgba(255,253,250,0.7)] px-[34px] py-[16px] text-center text-[12px] uppercase tracking-[0.2em] font-medium no-underline sm:inline-block"
+                  style={{ color: '#fffdfa' }}
+                >
+                  Book a Consultation
+                </Link>
+              </div>
             </div>
           </div>
         </section>
@@ -69,7 +71,7 @@ export default async function HomePage() {
         </section>
 
         {/* Category split: Tables / Chairs */}
-        <section className="grid grid-cols-2 gap-[4px]">
+        <section className="grid grid-cols-1 gap-[4px] sm:grid-cols-2">
           <Link href="/tables" className="group relative block h-[340px] overflow-hidden md:h-[560px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
