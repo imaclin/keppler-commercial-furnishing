@@ -54,6 +54,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 .serif { font-family: var(--font-cormorant), Georgia, serif; }
+/* Admin uses the sans typeface throughout (no serif headings in the dashboard). */
+.admin-body .serif { font-family: var(--font-inter), system-ui, sans-serif; }
 .eyebrow {
   font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
   font-weight: 500; color: var(--stone);

@@ -171,7 +171,7 @@ export function AdminShell({
             </div>
           </div>
         </header>
-        <div className="min-w-0 flex-1 overflow-y-auto">{children}</div>
+        <div className="admin-body min-w-0 flex-1 overflow-y-auto">{children}</div>
       </div>
 
       <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} navItems={navItems} entityItems={commandItems} />
