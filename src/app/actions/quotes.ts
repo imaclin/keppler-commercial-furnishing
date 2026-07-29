@@ -66,9 +66,9 @@ export async function sendQuoteAction(
       'select u.email from quotes q join users u on u.id = q.customer_id where q.id = $1', [quoteId]);
     if (row) {
       const body = link
-        ? `Your HW invoice is ready. View it and pay securely from your account: pay link ${link}`
-        : 'Your HW invoice is ready. View it in your account.';
-      await sendEmail(row.email, 'Your HW invoice is ready', body);
+        ? `Your GS Chairs invoice is ready. View it and pay securely from your account: pay link ${link}`
+        : 'Your GS Chairs invoice is ready. View it in your account.';
+      await sendEmail(row.email, 'Your GS Chairs invoice is ready', body);
     }
   } catch {
     return { error: 'Could not send the invoice.' };

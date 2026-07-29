@@ -7,7 +7,7 @@ export default async function StaffPage() {
   return (
     <main className="p-5 md:p-10">
       <h1 className="serif text-3xl text-[var(--ink)]">Staff</h1>
-      <p className="mt-1 mb-8 text-sm text-[var(--stone)]">Everyone with access to the HW admin, their role, and details.</p>
+      <p className="mt-1 mb-8 text-sm text-[var(--stone)]">Everyone with access to the GS Chairs admin, their role, and details.</p>
       <StaffManager staff={staff} invites={invites} currentUserId={profile.id} />
     </main>
   );

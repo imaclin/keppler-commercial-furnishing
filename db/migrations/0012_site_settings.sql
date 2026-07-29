@@ -2,7 +2,7 @@
 -- edited from the admin "Web Details" page. Enforced single row via id = 1.
 create table if not exists site_settings (
   id               int primary key default 1,
-  site_title       text not null default 'HW',
+  site_title       text not null default 'GS Chairs',
   meta_description text,
   company_name     text,
   contact_email    text,
@@ -15,10 +15,10 @@ create table if not exists site_settings (
 
 insert into site_settings (id, site_title, meta_description, company_name, contact_email, contact_phone, address)
 values (1,
-  'HW',
+  'GS Chairs',
   'Handcrafted American solid-wood furniture, built to be handed down.',
-  'HW',
-  'hello@hw.test',
+  'GS Chairs',
+  'hello@gschairs.test',
   '(330) 555-0142',
   'Holmes County, Ohio')
 on conflict (id) do nothing;

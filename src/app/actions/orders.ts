@@ -16,7 +16,7 @@ export async function advanceOrderAction(orderId: string, status: OrderStatus, n
   }
   const row = await queryOne<{ email: string }>(
     'select u.email from orders o join users u on u.id = o.customer_id where o.id = $1', [orderId]);
-  if (row) await sendEmail(row.email, `Your HW order is now ${status.replace('_', ' ')}`, `Your order status changed to ${status}.`);
+  if (row) await sendEmail(row.email, `Your GS Chairs order is now ${status.replace('_', ' ')}`, `Your order status changed to ${status}.`);
   revalidatePath(`/admin/orders/${orderId}`);
   return { ok: true };
 }

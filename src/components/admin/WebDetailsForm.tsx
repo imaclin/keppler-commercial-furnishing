@@ -55,7 +55,7 @@ export function WebDetailsForm({ settings }: { settings: SiteSettings }) {
       <section className="rounded-xl border border-[var(--line)] bg-[var(--paper)] p-6">
         <div className="mb-4 flex items-start gap-3">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--bone)] text-[var(--walnut)]"><Search className="h-5 w-5" /></span>
-          <div><h2 className="font-medium text-[var(--ink)]">SEO</h2><p className="text-xs text-[var(--stone)]">How HW appears in search results and shared links.</p></div>
+          <div><h2 className="font-medium text-[var(--ink)]">SEO</h2><p className="text-xs text-[var(--stone)]">How GS Chairs appears in search results and shared links.</p></div>
         </div>
         <div className="space-y-3">
           <div className="space-y-1.5"><Label>Site title</Label><Input value={siteTitle} onChange={(e) => setSiteTitle(e.target.value)} /></div>

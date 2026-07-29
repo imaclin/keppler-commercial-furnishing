@@ -46,7 +46,7 @@ export function MessageThread({ messages }: { messages: Message[] }) {
                 <MessageAttachments attachments={m.attachments} onLight={!mine} />
               </div>
               <span className="mt-1 px-1 text-[10px] text-[var(--stone)]">
-                {mine ? 'You' : 'HW'} · {formatTime(m.created_at)}
+                {mine ? 'You' : 'GS Chairs'} · {formatTime(m.created_at)}
               </span>
             </div>
           );

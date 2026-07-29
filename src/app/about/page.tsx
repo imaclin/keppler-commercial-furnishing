@@ -3,7 +3,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { RichHero, Statement, FeatureRow, StatBand, CtaBand } from '@/components/storefront/rich';
 
-export const metadata: Metadata = { title: 'About HW', description: 'HW builds solid-wood tables and chairs, handcrafted to order in America and made to be handed down.' };
+export const metadata: Metadata = { title: 'About GS Chairs', description: 'GS Chairs builds solid-wood tables and chairs, handcrafted to order in America and made to be handed down.' };
 
 export default function AboutPage() {
   return (
@@ -25,7 +25,7 @@ export default function AboutPage() {
           image="/brand/craft.png"
           eyebrow="Our Story"
           title="A modern way to buy old-world craft"
-          body="HW grew out of a partnership with small American workshops that have built furniture the same careful way for generations. We pair that craft tradition with a straightforward way to buy: choose your piece, your wood, and your finish, and we build it for you."
+          body="GS Chairs grew out of a partnership with small American workshops that have built furniture the same careful way for generations. We pair that craft tradition with a straightforward way to buy: choose your piece, your wood, and your finish, and we build it for you."
         />
         <FeatureRow
           image="/demo/demo-table3.png"

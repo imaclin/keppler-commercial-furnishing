@@ -14,9 +14,9 @@ import { isFavorited } from '@/lib/account';
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const product = await getStorefrontProduct(slug);
-  if (!product) return { title: 'Not found | HW' };
+  if (!product) return { title: 'Not found | GS Chairs' };
   return {
-    title: `${product.name} | HW`,
+    title: `${product.name} | GS Chairs`,
     description: product.short_description ?? 'Handcrafted American solid-wood furniture.',
   };
 }
@@ -36,7 +36,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     description: product.short_description ?? product.story ?? undefined,
     category: product.category,
     image: product.images.map((i) => i.url),
-    brand: { '@type': 'Brand', name: 'HW' },
+    brand: { '@type': 'Brand', name: 'GS Chairs' },
     material: product.woods.map((w) => w.name).join(', ') || undefined,
     offers: {
       '@type': 'Offer',

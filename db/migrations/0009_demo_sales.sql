@@ -9,7 +9,7 @@ declare
   v_oak text; v_walnut text; v_natural text; v_chestnut text;
   q1 uuid; q2 uuid; o1 uuid; o2 uuid; o3 uuid; o4 uuid;
 begin
-  if exists (select 1 from users where email = 'sarah@hw-demo.test') then return; end if;
+  if exists (select 1 from users where email = 'sarah@gschairs-demo.test') then return; end if;
 
   -- product / option references
   select id into v_homestead from products where slug = 'the-homestead-table';
@@ -22,12 +22,12 @@ begin
   select name into v_chestnut from finishes where name = 'Chestnut';
 
   -- ---------- customers ----------
-  insert into users (email, password_hash) values ('sarah@hw-demo.test', v_hash) returning id into v_sarah;
-  insert into profiles (id, email, name, role) values (v_sarah, 'sarah@hw-demo.test', 'Sarah Whitfield', 'customer');
-  insert into users (email, password_hash) values ('david@hw-demo.test', v_hash) returning id into v_david;
-  insert into profiles (id, email, name, role) values (v_david, 'david@hw-demo.test', 'David Penner', 'customer');
-  insert into users (email, password_hash) values ('anna@hw-demo.test', v_hash) returning id into v_anna;
-  insert into profiles (id, email, name, role) values (v_anna, 'anna@hw-demo.test', 'Anna Yoder', 'customer');
+  insert into users (email, password_hash) values ('sarah@gschairs-demo.test', v_hash) returning id into v_sarah;
+  insert into profiles (id, email, name, role) values (v_sarah, 'sarah@gschairs-demo.test', 'Sarah Whitfield', 'customer');
+  insert into users (email, password_hash) values ('david@gschairs-demo.test', v_hash) returning id into v_david;
+  insert into profiles (id, email, name, role) values (v_david, 'david@gschairs-demo.test', 'David Penner', 'customer');
+  insert into users (email, password_hash) values ('anna@gschairs-demo.test', v_hash) returning id into v_anna;
+  insert into profiles (id, email, name, role) values (v_anna, 'anna@gschairs-demo.test', 'Anna Yoder', 'customer');
 
   -- ---------- quotes ----------
   -- Anna: a fresh request awaiting pricing (shows in the admin attention queue)

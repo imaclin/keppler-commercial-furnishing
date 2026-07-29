@@ -23,7 +23,7 @@ export default async function HomePage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/brand/hero.png"
-            alt="HW hero"
+            alt="GS Chairs hero"
             className="h-full w-full object-cover"
             style={{ filter: 'saturate(0.96) brightness(0.97)' }}
           />
@@ -63,7 +63,7 @@ export default async function HomePage() {
 
         {/* Intro statement band */}
         <section className="px-6 pb-16 pt-16 text-center md:px-14 md:pb-[84px] md:pt-24">
-          <div className="eyebrow">The HW Standard</div>
+          <div className="eyebrow">The GS Chairs Standard</div>
           <h2 className="serif mx-auto mt-[18px] max-w-[760px] text-[26px] font-normal leading-[1.3] text-[var(--ink)] md:text-[38px]">
             Every piece is cut, joined, and finished by hand from a single intention: to outlast the people who buy it.
           </h2>

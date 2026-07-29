@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ContentPage } from '@/components/storefront/ContentPage';
 
-export const metadata: Metadata = { title: 'Financing | HW', description: 'Flexible financing options to bring home a piece built to last a lifetime.' };
+export const metadata: Metadata = { title: 'Financing | GS Chairs', description: 'Flexible financing options to bring home a piece built to last a lifetime.' };
 
 export default function FinancingPage() {
   return (

@@ -99,7 +99,7 @@ export function AdminShell({
         } ${compact ? 'md:w-[64px]' : 'md:w-[248px]'}`}
       >
         <div className={`flex items-center ${compact ? 'justify-center' : 'justify-between px-6'} h-[64px] shrink-0`}>
-          {!compact && <span className="serif text-2xl tracking-[0.2em] text-[#fffdfa]">HW</span>}
+          {!compact && <span className="serif text-xl tracking-[0.18em] text-[#fffdfa] whitespace-nowrap">GS CHAIRS</span>}
           <button
             onClick={() => (isDesktop ? toggle() : setMobileOpen(false))}
             aria-label="Toggle sidebar"

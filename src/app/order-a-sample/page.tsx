@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ContentPage } from '@/components/storefront/ContentPage';
 
-export const metadata: Metadata = { title: 'Order a Sample | HW', description: 'Order wood and finish samples to see and feel your HW piece before you commit.' };
+export const metadata: Metadata = { title: 'Order a Sample | GS Chairs', description: 'Order wood and finish samples to see and feel your GS Chairs piece before you commit.' };
 
 export default function OrderASamplePage() {
   return (

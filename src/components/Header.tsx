@@ -13,9 +13,11 @@ const NAV = [
 ];
 
 const UTIL = [
-  { href: '/search', label: 'Search', icon: Search },
-  { href: '/consultation', label: 'Consultation', icon: CalendarDays },
-  { href: '/account', label: 'Account', icon: User },
+  // mobileBar: false => drawer only. The bar has to stay narrow enough on phones
+  // for the wordmark to sit centered without touching an icon.
+  { href: '/search', label: 'Search', icon: Search, mobileBar: false },
+  { href: '/consultation', label: 'Consultation', icon: CalendarDays, mobileBar: false },
+  { href: '/account', label: 'Account', icon: User, mobileBar: true },
 ];
 
 export function Header() {
@@ -35,7 +37,7 @@ export function Header() {
         </button>
 
         <Link href="/" className="text-center" onClick={() => setOpen(false)}>
-          <span className="serif block text-3xl font-semibold tracking-[0.18em] text-[var(--espresso)] leading-none md:text-4xl">HW</span>
+          <span className="serif block text-xl font-semibold tracking-[0.2em] pl-[0.2em] text-[var(--espresso)] leading-none whitespace-nowrap md:text-3xl md:tracking-[0.24em] md:pl-[0.24em]">GS CHAIRS</span>
         </Link>
 
         {/* Right: utility icons (Search, Consultation, Account) */}
@@ -43,7 +45,7 @@ export function Header() {
           {UTIL.map((n) => {
             const Icon = n.icon;
             return (
-              <Link key={n.href} href={n.href} aria-label={n.label} title={n.label} className="text-[var(--ink)] hover:text-[var(--walnut)]">
+              <Link key={n.href} href={n.href} aria-label={n.label} title={n.label} className={`text-[var(--ink)] hover:text-[var(--walnut)] ${n.mobileBar ? '' : 'hidden md:block'}`}>
                 <Icon className="h-[19px] w-[19px]" strokeWidth={1.6} />
               </Link>
             );

@@ -71,7 +71,7 @@ export default async function QuoteDetailPage({ params }: { params: Promise<{ id
               rel="noopener noreferrer"
               className="block w-full bg-[var(--espresso)] px-6 py-4 text-center text-[12px] uppercase tracking-[0.18em] text-[#fffdfa] hover:bg-[var(--walnut)]"
             >
-              Pay Invoice — {formatPriceCents(quote.total_cents)}
+              Pay Invoice · {formatPriceCents(quote.total_cents)}
             </a>
           )}
           <QuoteAcceptButton quoteId={id} />

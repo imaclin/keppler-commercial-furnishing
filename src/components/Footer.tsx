@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 const COLS = [
   { h: 'Our Company', links: [
-    { label: 'About HW', href: '/about' },
+    { label: 'About GS Chairs', href: '/about' },
     { label: 'Our Builders', href: '/our-builders' },
     { label: 'Craftsmanship', href: '/our-craft' },
     { label: 'Sustainability', href: '/sustainability' },
@@ -29,9 +29,9 @@ export function Footer() {
     <footer className="bg-[var(--espresso)] px-6 py-12 text-[#c3b8a6] md:px-14 md:py-16">
       <div className="mx-auto grid max-w-[1320px] grid-cols-2 gap-8 md:grid-cols-[1.4fr_1fr_1fr_1fr] md:gap-10">
         <div className="col-span-2 md:col-span-1">
-          <div className="serif text-3xl tracking-[0.18em] text-[#fffdfa]">HW</div>
+          <div className="serif text-2xl tracking-[0.22em] text-[#fffdfa] whitespace-nowrap">GS CHAIRS</div>
           <p className="mt-4 max-w-[280px] text-[12.5px] leading-relaxed text-[#b4a895]">
-            HW. Solid-wood tables and chairs, handcrafted to order in America and built to be handed down.
+            GS Chairs. Solid-wood tables and chairs, handcrafted to order in America and built to be handed down.
           </p>
         </div>
         {COLS.map((c) => (
@@ -42,7 +42,7 @@ export function Footer() {
         ))}
       </div>
       <div className="mx-auto mt-12 max-w-[1320px] border-t border-white/10 pt-6 text-[11px] tracking-[0.06em] text-[#9a8e7c]">
-        &copy; {new Date().getFullYear()} HW
+        &copy; {new Date().getFullYear()} GS Chairs
       </div>
     </footer>
   );

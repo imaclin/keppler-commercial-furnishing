@@ -14,7 +14,7 @@ export default function LoginPage() {
     <main className="flex min-h-screen items-center justify-center bg-[var(--cream)] p-6">
       <div className="w-full max-w-md">
         <Link href="/" className="mb-8 block text-center">
-          <span className="serif text-5xl font-semibold tracking-[0.18em] text-[var(--espresso)]">HW</span>
+          <span className="serif text-4xl font-semibold tracking-[0.2em] pl-[0.2em] text-[var(--espresso)] whitespace-nowrap">GS CHAIRS</span>
         </Link>
         <Card className="p-8">
           <h1 className="serif text-3xl">Sign in</h1>

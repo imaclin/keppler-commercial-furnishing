@@ -1,5 +1,5 @@
 -- Demo/dev data owned by the seeded admin account so that signing in as
--- admin@hw.test and visiting the customer portal (/account) shows a populated
+-- admin@gschairs.test and visiting the customer portal (/account) shows a populated
 -- experience: favorites, sample requests, a sent quote, an in-production order
 -- with a tracker, and a message thread. Idempotent: skips if already seeded.
 do $$
@@ -8,7 +8,7 @@ declare
   v_homestead uuid; v_garden uuid; v_lancaster uuid; v_riverbend uuid;
   q uuid; o uuid;
 begin
-  select id into v_admin from users where email = 'admin@hw.test';
+  select id into v_admin from users where email = 'admin@gschairs.test';
   if v_admin is null then return; end if;
   if exists (select 1 from favorites where user_id = v_admin) then return; end if;
 

@@ -3,7 +3,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { RichHero, Statement, FeatureRow, StatBand, Quote, CtaBand } from '@/components/storefront/rich';
 
-export const metadata: Metadata = { title: 'Craftsmanship | HW', description: 'How HW furniture is built: traditional joinery, kiln-dried solid hardwood, and a hand-rubbed finish, made to last for generations.' };
+export const metadata: Metadata = { title: 'Craftsmanship | GS Chairs', description: 'How GS Chairs furniture is built: traditional joinery, kiln-dried solid hardwood, and a hand-rubbed finish, made to last for generations.' };
 
 export default function OurCraftPage() {
   return (
@@ -32,7 +32,7 @@ export default function OurCraftPage() {
           imageRight
           eyebrow="Step Two"
           title="Solid hardwood, chosen board by board"
-          body="Kiln-dried American hardwood, selected for grain and color one board at a time. No particle board, no MDF, no veneer hiding filler. The wood you see is the wood throughout — and it can be sanded, repaired, and refinished for decades."
+          body="Kiln-dried American hardwood, selected for grain and color one board at a time. No particle board, no MDF, no veneer hiding filler. The wood you see is the wood throughout, and it can be sanded, repaired, and refinished for decades."
         />
         <FeatureRow
           image="/brand/room.png"
@@ -50,7 +50,7 @@ export default function OurCraftPage() {
           ]}
         />
 
-        <Quote text="We build the way furniture was meant to be built, and we sign our work." attribution="The HW Workshop" />
+        <Quote text="We build the way furniture was meant to be built, and we sign our work." attribution="The GS Chairs Workshop" />
 
         <CtaBand
           title="See the craft for yourself."
