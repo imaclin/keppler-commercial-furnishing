@@ -17,26 +17,26 @@ describe('catalog product round-trip (integration)', () => {
 
     const slug = `test-homestead-${Date.now()}`;
     const base: ProductInput = {
-      slug, name: 'Test Homestead', category: 'table', collection_id: null,
-      short_description: 'A test piece', story: null, base_price_cents: 320000,
+      slug, name: 'Test Homestead', category: 'chair', collection_id: null,
+      short_description: 'A test piece', story: null, base_price_cents: 112000,
       lead_time_weeks: 8, region: 'Holmes County, Ohio', status: 'published', featured: true,
-      length_in: 84, width_in: 42, height_in: 30, weight_lb: 180,
+      length_in: 24, width_in: 23, height_in: 38, weight_lb: 24,
       woodIds: woods.map((w) => w.id), finishIds: finishes.map((f) => f.id),
-      sizes: [{ label: '84"', seats: 8, price_delta_cents: 40000 }],
+      sizes: [{ label: 'Armchair', seats: null, price_delta_cents: 12000 }],
       imageUrls: ['/uploads/test.jpg'],
     };
 
     const id = await createProduct(base);
     const p = await getProductById(id);
     expect(p?.name).toBe('Test Homestead');
-    expect(p?.base_price_cents).toBe(320000);
+    expect(p?.base_price_cents).toBe(112000);
     expect(p?.woodIds.length).toBe(2);
     expect(p?.finishIds.length).toBe(1);
     expect(p?.sizes.length).toBe(1);
-    expect(p?.sizes[0].label).toBe('84"');
+    expect(p?.sizes[0].label).toBe('Armchair');
     expect(p?.images.length).toBe(1);
-    expect(Number(p?.length_in)).toBe(84);
-    expect(Number(p?.weight_lb)).toBe(180);
+    expect(Number(p?.length_in)).toBe(24);
+    expect(Number(p?.weight_lb)).toBe(24);
 
     // Wholesale relation replace on update.
     await updateProduct(id, { ...base, woodIds: [woods[0].id], finishIds: [], sizes: [], imageUrls: [] });

@@ -23,7 +23,6 @@ export function ProductForm({
 }) {
   const [name, setName] = useState(product?.name ?? '');
   const [slug, setSlug] = useState(product?.slug ?? '');
-  const [category, setCategory] = useState<'table' | 'chair'>(product?.category ?? 'table');
   const [collectionId, setCollectionId] = useState(product?.collection_id ?? '');
   const [shortDesc, setShortDesc] = useState(product?.short_description ?? '');
   const [story, setStory] = useState(product?.story ?? '');
@@ -68,7 +67,8 @@ export function ProductForm({
     setError(null);
     const input: ProductInput = {
       slug: slug.trim() || slugify(name),
-      name: name.trim(), category, collection_id: collectionId || null,
+      // The catalog is chairs only, so there is no category picker to read.
+      name: name.trim(), category: 'chair', collection_id: collectionId || null,
       short_description: shortDesc.trim() || null, story: story.trim() || null,
       base_price_cents: Math.round(parseFloat(basePrice || '0') * 100),
       lead_time_weeks: leadTime ? parseInt(leadTime, 10) : null,
@@ -97,12 +97,7 @@ export function ProductForm({
           <div className="space-y-2"><Label>Name</Label><Input value={name} onChange={(e) => { setName(e.target.value); if (!product) setSlug(slugify(e.target.value)); }} /></div>
           <div className="space-y-2"><Label>Slug</Label><Input value={slug} onChange={(e) => setSlug(e.target.value)} /></div>
         </div>
-        <div className="grid grid-cols-3 gap-4">
-          <div className="space-y-2"><Label>Category</Label>
-            <select value={category} onChange={(e) => setCategory(e.target.value as 'table' | 'chair')} className="h-9 w-full border border-[var(--line)] px-2 text-sm">
-              <option value="table">Table</option><option value="chair">Chair</option>
-            </select>
-          </div>
+        <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2"><Label>Collection</Label>
             <select value={collectionId} onChange={(e) => setCollectionId(e.target.value)} className="h-9 w-full border border-[var(--line)] px-2 text-sm">
               <option value="">None</option>

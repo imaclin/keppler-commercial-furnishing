@@ -2,10 +2,10 @@
 -- catalog through the admin; this seed is for local dev and review.
 insert into collections (slug, name, description, sort_order) values
   ('homestead', 'The Homestead Collection', 'Solid, honest dining pieces built for daily life.', 1),
-  ('heirloom', 'The Heirloom Collection', 'Showpiece tables and chairs meant to be handed down.', 2)
+  ('heirloom', 'The Heirloom Collection', 'Showpiece seating meant to be handed down.', 2)
 on conflict (slug) do nothing;
 
--- helper: insert a product, its images, all woods, all finishes, and two sizes
+-- helper: insert a product, its image, and every wood and finish as an option
 do $$
 declare
   v_homestead uuid; v_heirloom uuid;
@@ -17,14 +17,14 @@ begin
 
   for rec in
     select * from (values
-      ('the-homestead-table','The Homestead Table','table',v_homestead,'Solid oak, trestle base, made to seat the whole family.',320000,8,'/demo/demo-table.png'),
-      ('the-garden-round','The Garden Round','table',v_homestead,'A round solid-walnut pedestal table.',245000,8,'/demo/demo-table2.png'),
-      ('the-riverbend','The Riverbend','table',v_heirloom,'Live-edge walnut with a sculptural base.',480000,12,'/demo/demo-table3.png'),
-      ('the-lancaster-farm','The Lancaster Farm','table',v_homestead,'Classic farmhouse oak with turned legs.',290000,9,'/demo/demo-table4.png'),
-      ('the-orchard','The Orchard','table',v_heirloom,'Solid cherry extension table.',365000,10,'/demo/demo-table5.png'),
       ('the-lancaster-chair','The Lancaster Chair','chair',v_homestead,'Solid walnut, hand-finished, spindle back.',89000,8,'/demo/demo-chair.png'),
-      ('the-shaker-side-chair','The Shaker Side Chair','chair',v_homestead,'Solid cherry with a woven seat.',64000,8,'/demo/demo-chair.png'),
-      ('the-keeping-chair','The Keeping Chair','chair',v_heirloom,'A generous dining armchair in maple.',96000,9,'/demo/demo-chair.png')
+      ('the-shaker-side-chair','The Shaker Side Chair','chair',v_homestead,'Solid cherry with a hand-woven tape seat.',64000,8,'/demo/demo-chair7.png'),
+      ('the-keeping-chair','The Keeping Chair','chair',v_heirloom,'A generous dining armchair in maple.',96000,9,'/demo/demo-chair8.png'),
+      ('the-homestead-armchair','The Homestead Armchair','chair',v_homestead,'Solid oak dining armchair with a hand-shaped saddle seat.',112000,8,'/demo/demo-chair2.png'),
+      ('the-garden-counter-stool','The Garden Counter Stool','chair',v_homestead,'A round-seat walnut counter stool with a turned footrest.',78000,8,'/demo/demo-chair3.png'),
+      ('the-riverbend-bench','The Riverbend Bench','chair',v_heirloom,'Live-edge walnut dining bench on a sculptural base.',148000,12,'/demo/demo-chair4.png'),
+      ('the-farmhouse-ladderback','The Farmhouse Ladderback','chair',v_homestead,'Classic oak ladderback with a hand-woven rush seat.',58000,9,'/demo/demo-chair5.png'),
+      ('the-orchard-rocker','The Orchard Rocker','chair',v_heirloom,'Solid cherry rocker, steam-bent and hand-shaped.',132000,10,'/demo/demo-chair6.png')
     ) as t(slug,name,category,collection_id,descr,price,lead,img)
   loop
     insert into products (slug, name, category, collection_id, short_description, base_price_cents, lead_time_weeks, region, status, featured)
@@ -36,10 +36,7 @@ begin
     insert into product_images (product_id, url, type, sort_order) values (v_pid, rec.img, 'on_white', 0);
     insert into product_woods (product_id, wood_id, price_delta_cents) select v_pid, id, 0 from wood_species;
     insert into product_finishes (product_id, finish_id, price_delta_cents) select v_pid, id, 0 from finishes;
-    if rec.category = 'table' then
-      insert into product_sizes (product_id, label, seats, price_delta_cents, sort_order) values
-        (v_pid, '72"', 6, 0, 0), (v_pid, '84"', 8, 40000, 1), (v_pid, '96"', 10, 80000, 2);
-    end if;
+    -- No product_sizes: chairs are configured by wood and finish, not by length.
     v_pid := null;
   end loop;
 end $$;

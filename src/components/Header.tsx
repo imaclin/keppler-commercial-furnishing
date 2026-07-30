@@ -6,7 +6,6 @@ import { Menu, X, Search, CalendarDays, User, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/lib/cart';
 
 const NAV = [
-  { href: '/tables', label: 'Tables' },
   { href: '/chairs', label: 'Chairs' },
   { href: '/collections', label: 'Collections' },
   { href: '/our-craft', label: 'Our Craft' },

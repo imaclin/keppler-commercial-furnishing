@@ -40,11 +40,11 @@ export default async function HomePage() {
                 Built once.<br />Kept for generations.
               </h1>
               <p className="mt-[22px] mb-[34px] max-w-[430px] text-base leading-[1.7] font-light" style={{ color: 'rgba(255,253,250,0.9)' }}>
-                Solid-wood tables and chairs, made to order by master craftsmen and finished by hand. No particle board, no shortcuts, no compromise.
+                Solid-wood chairs, made to order by master craftsmen and finished by hand. No particle board, no shortcuts, no compromise.
               </p>
               <div className="flex flex-col gap-3 sm:flex-row sm:gap-[14px]">
                 <Link
-                  href="/tables"
+                  href="/chairs"
                   className="block bg-[#fffdfa] px-[34px] py-[16px] text-center text-[12px] uppercase tracking-[0.2em] font-medium text-[var(--espresso)] no-underline sm:inline-block"
                 >
                   Explore the Collection
@@ -70,28 +70,8 @@ export default async function HomePage() {
           <div className="mx-auto mt-[26px] h-[1.5px] w-[44px] bg-[var(--walnut)]" />
         </section>
 
-        {/* Category split: Tables / Chairs */}
+        {/* Two-up split: the full chair catalog / the curated collections */}
         <section className="grid grid-cols-1 gap-[4px] sm:grid-cols-2">
-          <Link href="/tables" className="group relative block h-[340px] overflow-hidden md:h-[560px]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/demo/demo-table.png"
-              alt="Tables"
-              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-            />
-            <div
-              className="absolute inset-0"
-              style={{ background: 'linear-gradient(180deg, rgba(30,24,18,0) 45%, rgba(30,24,18,0.5) 100%)' }}
-            />
-            <div className="absolute bottom-[44px] left-0 right-0 z-10 text-center" style={{ color: '#fffdfa' }}>
-              <div className="serif text-[40px] font-medium">Tables</div>
-              <div
-                className="mt-2 inline-block border-b border-[rgba(255,253,250,0.6)] pb-[3px] text-[11px] uppercase tracking-[0.24em]"
-              >
-                Shop Tables
-              </div>
-            </div>
-          </Link>
           <Link href="/chairs" className="group relative block h-[340px] overflow-hidden md:h-[560px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -112,6 +92,26 @@ export default async function HomePage() {
               </div>
             </div>
           </Link>
+          <Link href="/collections" className="group relative block h-[340px] overflow-hidden md:h-[560px]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/demo/demo-chair6.png"
+              alt="Collections"
+              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+            />
+            <div
+              className="absolute inset-0"
+              style={{ background: 'linear-gradient(180deg, rgba(30,24,18,0) 45%, rgba(30,24,18,0.5) 100%)' }}
+            />
+            <div className="absolute bottom-[44px] left-0 right-0 z-10 text-center" style={{ color: '#fffdfa' }}>
+              <div className="serif text-[40px] font-medium">Collections</div>
+              <div
+                className="mt-2 inline-block border-b border-[rgba(255,253,250,0.6)] pb-[3px] text-[11px] uppercase tracking-[0.24em]"
+              >
+                Browse Collections
+              </div>
+            </div>
+          </Link>
         </section>
 
         {/* Featured Pieces */}
@@ -126,7 +126,7 @@ export default async function HomePage() {
             </div>
             <div className="mt-[56px] text-center">
               <Link
-                href="/tables"
+                href="/chairs"
                 className="inline-block border border-[var(--espresso)] px-[34px] py-[16px] text-[12px] uppercase tracking-[0.2em] font-medium text-[var(--espresso)] no-underline"
               >
                 View All Pieces

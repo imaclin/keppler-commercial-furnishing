@@ -3,7 +3,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { RichHero, Statement, FeatureRow, StatBand, CtaBand } from '@/components/storefront/rich';
 
-export const metadata: Metadata = { title: 'About GS Chairs', description: 'GS Chairs builds solid-wood tables and chairs, handcrafted to order in America and made to be handed down.' };
+export const metadata: Metadata = { title: 'About GS Chairs', description: 'GS Chairs builds solid-wood chairs, handcrafted to order in America and made to be handed down.' };
 
 export default function AboutPage() {
   return (
@@ -14,7 +14,7 @@ export default function AboutPage() {
           image="/brand/room.png"
           eyebrow="Our Company"
           title="Furniture meant to be handed down."
-          subtitle="Solid-wood tables and chairs, built to order by American craftsmen and finished by hand."
+          subtitle="Solid-wood chairs, built to order by American craftsmen and finished by hand."
         />
 
         <Statement>
@@ -28,10 +28,10 @@ export default function AboutPage() {
           body="GS Chairs grew out of a partnership with small American workshops that have built furniture the same careful way for generations. We pair that craft tradition with a straightforward way to buy: choose your piece, your wood, and your finish, and we build it for you."
         />
         <FeatureRow
-          image="/demo/demo-table3.png"
+          image="/demo/demo-chair4.png"
           imageRight
           eyebrow="What We Make"
-          title="Dining tables and chairs, done right"
+          title="Dining chairs, done right"
           body="Solid American hardwood, traditional joinery, and a hand-rubbed finish. No particle board, no veneers over filler, no shortcuts. Every piece is built one at a time and signed by the person who made it."
         />
 
@@ -47,7 +47,7 @@ export default function AboutPage() {
         <CtaBand
           title="Build something that lasts."
           body="Browse the collection or talk with us about the right piece for your home."
-          primary={{ href: '/tables', label: 'Explore the Collection' }}
+          primary={{ href: '/chairs', label: 'Explore the Collection' }}
           secondary={{ href: '/our-craft', label: 'See Our Craft' }}
         />
       </main>

@@ -1,5 +1,7 @@
 export type Role = 'customer' | 'staff' | 'admin';
-export type ProductCategory = 'table' | 'chair';
+// The catalog is chairs only. Kept as a named type so a future category can be
+// added here rather than threaded back through every query and form.
+export type ProductCategory = 'chair';
 export type ProductStatus = 'draft' | 'published';
 export type ImageType = 'on_white' | 'lifestyle' | 'detail';
 

@@ -43,7 +43,7 @@ export default function ConsultationPage() {
           title="Ready to start?"
           body="Reach out and we’ll set up your consultation, usually within one business day."
           primary={{ href: '/contact', label: 'Contact Us' }}
-          secondary={{ href: '/tables', label: 'Browse the Collection' }}
+          secondary={{ href: '/chairs', label: 'Browse the Collection' }}
         />
       </main>
       <Footer />

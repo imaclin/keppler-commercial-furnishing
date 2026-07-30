@@ -17,7 +17,7 @@ export default function OrderASamplePage() {
       ]}
     >
       <div className="mt-10">
-        <Link href="/tables" className="inline-block bg-[var(--espresso)] px-6 py-3 text-[12px] uppercase tracking-[0.18em] text-[#fffdfa]">Browse Pieces to Sample</Link>
+        <Link href="/chairs" className="inline-block bg-[var(--espresso)] px-6 py-3 text-[12px] uppercase tracking-[0.18em] text-[#fffdfa]">Browse Pieces to Sample</Link>
       </div>
     </ContentPage>
   );

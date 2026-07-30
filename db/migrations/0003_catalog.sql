@@ -12,7 +12,8 @@ create table products (
   id uuid primary key default gen_random_uuid(),
   slug text not null unique,
   name text not null,
-  category text not null check (category in ('table','chair')),
+  -- The catalog is chairs only. Widen this check if a category is ever added.
+  category text not null check (category in ('chair')),
   collection_id uuid references collections(id) on delete set null,
   short_description text,
   story text,

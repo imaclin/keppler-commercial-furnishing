@@ -1,5 +1,5 @@
 import { query, queryOne, transaction } from '@/lib/db';
-import type { Collection, WoodSpecies, Finish, Product, ProductImage, ProductSize, StorefrontCard, StorefrontProduct, ConfigOption } from '@/lib/types';
+import type { Collection, WoodSpecies, Finish, Product, ProductCategory, ProductImage, ProductSize, StorefrontCard, StorefrontProduct, ConfigOption } from '@/lib/types';
 
 // ---------- reference data ----------
 export async function listWoods(): Promise<WoodSpecies[]> {
@@ -46,7 +46,7 @@ export async function setProductCollection(productId: string, collectionId: stri
 
 // ---------- products ----------
 export async function listProducts(
-  opts: { q?: string; category?: 'table' | 'chair'; status?: 'draft' | 'published' } = {},
+  opts: { q?: string; category?: ProductCategory; status?: 'draft' | 'published' } = {},
 ): Promise<(Product & { image_url: string | null })[]> {
   const params: unknown[] = [];
   const where: string[] = [];
@@ -81,7 +81,7 @@ export async function getProductById(id: string): Promise<ProductDetail | null> 
 }
 
 export type ProductInput = {
-  slug: string; name: string; category: 'table' | 'chair'; collection_id: string | null;
+  slug: string; name: string; category: ProductCategory; collection_id: string | null;
   short_description: string | null; story: string | null; base_price_cents: number;
   lead_time_weeks: number | null; region: string | null; status: 'draft' | 'published'; featured: boolean;
   length_in: number | null; width_in: number | null; height_in: number | null; weight_lb: number | null;
@@ -167,7 +167,7 @@ const CARD_SELECT = `
   where p.status = 'published'`;
 
 export async function listPublished(
-  category: 'table' | 'chair' | null,
+  category: ProductCategory | null,
   opts: { woodId?: string; sort?: 'featured' | 'price_asc' | 'price_desc' | 'newest' } = {},
 ): Promise<StorefrontCard[]> {
   const params: unknown[] = [];

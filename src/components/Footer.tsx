@@ -31,7 +31,7 @@ export function Footer() {
         <div className="col-span-2 md:col-span-1">
           <div className="serif text-2xl tracking-[0.22em] text-[#fffdfa] whitespace-nowrap">GS CHAIRS</div>
           <p className="mt-4 max-w-[280px] text-[12.5px] leading-relaxed text-[#b4a895]">
-            GS Chairs. Solid-wood tables and chairs, handcrafted to order in America and built to be handed down.
+            GS Chairs. Solid-wood chairs, handcrafted to order in America and built to be handed down.
           </p>
         </div>
         {COLS.map((c) => (

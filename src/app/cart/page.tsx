@@ -43,7 +43,7 @@ export default function CartPage() {
           <div className="mt-10 border border-[var(--line)] bg-[var(--paper)] p-12 text-center">
             <ShoppingBag className="mx-auto h-8 w-8 text-[var(--stone)]" strokeWidth={1.4} />
             <p className="mt-4 text-[var(--stone)]">Your cart is empty.</p>
-            <Link href="/tables" className="mt-6 inline-block bg-[var(--espresso)] px-6 py-3 text-[12px] uppercase tracking-[0.18em] text-[#fffdfa]">Explore the Collection</Link>
+            <Link href="/chairs" className="mt-6 inline-block bg-[var(--espresso)] px-6 py-3 text-[12px] uppercase tracking-[0.18em] text-[#fffdfa]">Explore the Collection</Link>
           </div>
         ) : (
           <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">

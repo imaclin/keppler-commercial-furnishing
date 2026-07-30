@@ -25,7 +25,7 @@ export default function OurBuildersPage() {
           image="/brand/hero.png"
           eyebrow="The Makers"
           title="Independent woodworkers, not a factory"
-          body="We partner with a tight circle of independent craftsmen rather than a production line. Each maker owns their piece end to end, which means one person is accountable for the whole table or chair, and proud to put their name on it."
+          body="We partner with a tight circle of independent craftsmen rather than a production line. Each maker owns their piece end to end, which means one person is accountable for the whole chair, and proud to put their name on it."
         />
         <FeatureRow
           image="/demo/demo-chair.png"
@@ -40,7 +40,7 @@ export default function OurBuildersPage() {
         <CtaBand
           title="Own a piece of the work."
           body="Explore the collection, or talk with us about a custom commission."
-          primary={{ href: '/tables', label: 'Explore the Collection' }}
+          primary={{ href: '/chairs', label: 'Explore the Collection' }}
           secondary={{ href: '/consultation', label: 'Book a Consultation' }}
         />
       </main>

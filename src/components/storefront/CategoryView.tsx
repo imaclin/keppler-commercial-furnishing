@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { ProductCard } from '@/components/storefront/ProductCard';
-import type { StorefrontCard, WoodSpecies } from '@/lib/types';
+import type { ProductCategory, StorefrontCard, WoodSpecies } from '@/lib/types';
 import { getCategoryProductsAction } from '@/app/actions/storefront';
 
 export function CategoryView({
   category, title, intro, woods, initial,
 }: {
-  category: 'table' | 'chair'; title: string; intro: string; woods: WoodSpecies[]; initial: StorefrontCard[];
+  category: ProductCategory; title: string; intro: string; woods: WoodSpecies[]; initial: StorefrontCard[];
 }) {
   const [woodId, setWoodId] = useState<string>('');
   const [sort, setSort] = useState<'featured' | 'price_asc' | 'price_desc' | 'newest'>('featured');

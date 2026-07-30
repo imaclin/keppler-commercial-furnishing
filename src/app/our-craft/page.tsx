@@ -28,7 +28,7 @@ export default function OurCraftPage() {
           body="We build with traditional mortise-and-tenon and hand-cut dovetail joints, fit by hand and locked for life. These joints tighten under load instead of loosening, which is why well-made wood furniture lasts generations while glued-and-stapled pieces fail in a few years."
         />
         <FeatureRow
-          image="/demo/demo-table.png"
+          image="/demo/demo-chair2.png"
           imageRight
           eyebrow="Step Two"
           title="Solid hardwood, chosen board by board"
@@ -55,7 +55,7 @@ export default function OurCraftPage() {
         <CtaBand
           title="See the craft for yourself."
           body="Explore the collection, or book a consultation to choose the wood, finish, and proportions for your space."
-          primary={{ href: '/tables', label: 'Explore the Collection' }}
+          primary={{ href: '/chairs', label: 'Explore the Collection' }}
           secondary={{ href: '/consultation', label: 'Book a Consultation' }}
         />
       </main>
