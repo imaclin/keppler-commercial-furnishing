@@ -1,36 +1,124 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Keppler Commercial Furnishing
 
-## Getting Started
+Online catalog and quoting platform for Keppler Commercial Furnishing (Grand
+Slabs, LLC): handcrafted American solid-wood chairs, made to order.
 
-First, run the development server:
+Built with Next.js 16 (App Router, React 19), Tailwind, shadcn/ui, and Postgres
+accessed directly through the `pg` driver. Authentication is a custom
+email/password session scheme, not a third-party provider.
+
+> Note for contributors and agents: see `AGENTS.md`. This is Next.js 16, which
+> differs from earlier versions in meaningful ways. Check
+> `node_modules/next/dist/docs/` before relying on remembered APIs.
+>
+> `CLAUDE.md` is written for Rudy (the owner, non-technical) and his Claude
+> agent. It documents the branch-and-preview workflow, not the full setup.
+
+## Local development
+
+Requires Node 24 and a local Postgres server.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+createdb gs_chairs        # once
+npm run db:reset          # builds schema and seeds demo data
+npm run dev               # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The local database is still named `gs_chairs`. It was deliberately left alone
+during the rebrand so existing checkouts keep working; renaming it would break
+every developer's `.env.local` for no benefit.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`npm run db:reset` runs `db/reset.sql` followed by every migration in
+`db/migrations/` in order. It drops and recreates the `public` schema, so only
+ever point it at a local database.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Seeded local accounts (these exist only in the local database, and every
+`db:reset` restores them). The addresses still carry the old branding because
+they live in already-applied migrations, which are history and are not rewritten:
 
-## Learn More
+| Account | Email | Password |
+| --- | --- | --- |
+| Staff admin | `admin@gschairs.test` | `hwadmin123` |
+| Customers | `sarah`, `david`, `anna` `@gschairs-demo.test` | `customer123` |
 
-To learn more about Next.js, take a look at the following resources:
+Production uses different, rotated credentials. They are not stored in this
+repository.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Environment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Copy `.env.example` to `.env.local`.
 
-## Deploy on Vercel
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `DATABASE_URL` | yes | Postgres connection string |
+| `KEPPLER_EMAIL_FROM` | no | Sender for transactional email. Falls back to `GS_EMAIL_FROM`, then a placeholder. |
+| `RESEND_API_KEY` | no | Enables outbound email. Unset means email is a no-op. |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`GS_EMAIL_FROM` is the pre-rebrand name and is still read as a fallback so email
+does not break if only one of the two is set. Neither is currently set in
+Vercel, so production email is a no-op today.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Keep `.env.local` pointed at your local database. Pointing it at production
+means local development writes to live client data.
+
+## Tests
+
+```bash
+npm test
+```
+
+Vitest, including integration tests that hit a real local Postgres. Note that
+`vitest.config.ts` contains a hardcoded `DATABASE_URL` fallback which must stay
+in sync with the local database name.
+
+## Deployment
+
+Hosted on Vercel (project `kepplercf`) with Postgres on Neon, provisioned as a
+Vercel Marketplace resource. The Neon integration injects `DATABASE_URL` into all
+three Vercel environments automatically.
+
+Pushing to `main` deploys to production. To deploy manually instead:
+
+```bash
+vercel deploy --prod
+```
+
+Migrations do not run automatically on deploy. Apply them to production
+explicitly, using the unpooled connection string:
+
+```bash
+psql "$DATABASE_URL_UNPOOLED" -v ON_ERROR_STOP=1 -f db/migrations/00NN_name.sql
+```
+
+Do not run `db/reset.sql` against production. It drops the schema.
+
+## Branding
+
+The name lives in two places, and both have to move together:
+
+- Source code, which supplies the wordmark and the metadata fallbacks.
+- The `site_settings` row in the database, which the admin edits from
+  **Admin > Web Details**. `src/app/layout.tsx` reads `site_title` from there,
+  so that row, not the code, controls the browser tab and the OpenGraph title.
+
+`db/migrations/0017_keppler_rebrand.sql` moves that row. Migrations `0001`
+through `0016` still read "GS Chairs" or "HW" because they are history that
+already ran.
+
+## Layout
+
+| Path | Contents |
+| --- | --- |
+| `src/app/` | Routes. Storefront at the root, `admin/`, `account/`, `(auth)/`. |
+| `src/app/actions/` | Server actions (auth, cart, quotes, settings). |
+| `src/lib/` | Data access and domain logic (`catalog`, `auth`, `db`, `analytics`, `notify`). |
+| `src/components/` | UI, including `admin/` and `account/` shells. |
+| `db/migrations/` | Numbered, append-only SQL migrations. |
+| `docs/` | Design specs, plans, and mockups. Written pre-rebrand, so they say "HW". |
+| `src/proxy.ts` | Middleware. Next.js 16 renamed this from `middleware.ts`. |
+
+## House style
+
+No em dashes in user-facing copy or code comments. Use commas, colons,
+parentheses, or rewrite the sentence.
