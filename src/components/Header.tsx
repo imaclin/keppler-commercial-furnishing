@@ -7,7 +7,6 @@ import { useCart } from '@/lib/cart';
 
 const NAV = [
   { href: '/chairs', label: 'Chairs' },
-  { href: '/collections', label: 'Collections' },
   { href: '/our-craft', label: 'Our Craft' },
 ];
 
