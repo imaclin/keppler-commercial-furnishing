@@ -3,7 +3,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { RichHero, Statement, FeatureRow, StatBand, Quote, CtaBand } from '@/components/storefront/rich';
 
-export const metadata: Metadata = { title: 'Craftsmanship | GS Chairs', description: 'How GS Chairs furniture is built: traditional joinery, kiln-dried solid hardwood, and a hand-rubbed finish, made to last for generations.' };
+export const metadata: Metadata = { title: 'Craftsmanship | Keppler Commercial Furnishing', description: 'How Keppler furniture is built: traditional joinery, kiln-dried solid hardwood, and a hand-rubbed finish, made to last for generations.' };
 
 export default function OurCraftPage() {
   return (
@@ -50,7 +50,7 @@ export default function OurCraftPage() {
           ]}
         />
 
-        <Quote text="We build the way furniture was meant to be built, and we sign our work." attribution="The GS Chairs Workshop" />
+        <Quote text="We build the way furniture was meant to be built, and we sign our work." attribution="The Keppler Workshop" />
 
         <CtaBand
           title="See the craft for yourself."

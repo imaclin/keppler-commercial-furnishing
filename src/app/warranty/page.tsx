@@ -2,14 +2,14 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ContentPage } from '@/components/storefront/ContentPage';
 
-export const metadata: Metadata = { title: 'Warranty | GS Chairs', description: 'The GS Chairs warranty covers materials and craftsmanship on every handcrafted piece.' };
+export const metadata: Metadata = { title: 'Warranty | Keppler Commercial Furnishing', description: 'The Keppler Commercial Furnishing warranty covers materials and craftsmanship on every handcrafted piece.' };
 
 export default function WarrantyPage() {
   return (
     <ContentPage
       eyebrow="Customer Care"
       title="Warranty"
-      intro="We sign our work and we stand behind it. Every GS Chairs piece is warranted against defects in materials and craftsmanship for the life of the original owner."
+      intro="We sign our work and we stand behind it. Every Keppler piece is warranted against defects in materials and craftsmanship for the life of the original owner."
       sections={[
         { heading: 'What’s covered', body: 'Structural defects in the wood and joinery, and workmanship issues such as joints that loosen or finishes that fail under normal indoor use. If something we built doesn’t hold up the way it should, we’ll make it right.' },
         { heading: 'What’s not covered', body: 'Normal aging and patina, changes in color from sunlight, and the natural movement of solid wood with humidity. These are features of real wood, not defects. Damage from misuse, accidents, alterations, or improper care is also excluded.' },

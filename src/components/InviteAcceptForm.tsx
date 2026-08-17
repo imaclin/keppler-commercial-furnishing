@@ -27,7 +27,7 @@ export function InviteAcceptForm({ token, presetEmail, role }: { token: string; 
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-[var(--stone)]">You&rsquo;ve been invited to join the GS Chairs team as <span className="font-medium capitalize text-[var(--ink)]">{role}</span>. Set up your account to continue.</p>
+      <p className="text-sm text-[var(--stone)]">You&rsquo;ve been invited to join the Keppler team as <span className="font-medium capitalize text-[var(--ink)]">{role}</span>. Set up your account to continue.</p>
       <div className="space-y-2"><Label htmlFor="name">Your name</Label><Input id="name" value={name} onChange={(e) => { setName(e.target.value); setError(null); }} /></div>
       <div className="space-y-2"><Label htmlFor="email">Email</Label><Input id="email" type="email" value={email} disabled={!!presetEmail} onChange={(e) => { setEmail(e.target.value); setError(null); }} /></div>
       <div className="space-y-2"><Label htmlFor="password">Password</Label><Input id="password" type="password" autoComplete="new-password" minLength={8} value={password} onChange={(e) => { setPassword(e.target.value); setError(null); }} /></div>

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { ContentPage } from '@/components/storefront/ContentPage';
 
-export const metadata: Metadata = { title: 'Sustainability | GS Chairs', description: 'Responsibly sourced hardwood, low-waste workshops, and furniture built to last for generations.' };
+export const metadata: Metadata = { title: 'Sustainability | Keppler Commercial Furnishing', description: 'Responsibly sourced hardwood, low-waste workshops, and furniture built to last for generations.' };
 
 export default function SustainabilityPage() {
   return (

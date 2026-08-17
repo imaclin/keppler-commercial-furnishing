@@ -10,10 +10,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const s = await getSiteSettings();
   const description = s.meta_description ?? "Handcrafted American solid-wood furniture, built to be handed down.";
   return {
-    title: s.site_title || "GS Chairs",
+    title: s.site_title || "Keppler Commercial Furnishing",
     description,
     openGraph: {
-      title: s.site_title || "GS Chairs",
+      title: s.site_title || "Keppler Commercial Furnishing",
       description,
       images: s.og_image_url ? [{ url: s.og_image_url }] : undefined,
     },

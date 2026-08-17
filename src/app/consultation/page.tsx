@@ -3,7 +3,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { RichHero, CtaBand } from '@/components/storefront/rich';
 
-export const metadata: Metadata = { title: 'Design Consultation | GS Chairs', description: 'Book a complimentary one-on-one design consultation to plan your GS Chairs piece: wood, finish, and proportions.' };
+export const metadata: Metadata = { title: 'Design Consultation | Keppler Commercial Furnishing', description: 'Book a complimentary one-on-one design consultation to plan your Keppler piece: wood, finish, and proportions.' };
 
 const steps = [
   { n: '01', title: 'Tell us about your space', body: 'Share your room, how you live in it, and the look you’re after. Rough dimensions and a few inspiration images help, but aren’t required.' },

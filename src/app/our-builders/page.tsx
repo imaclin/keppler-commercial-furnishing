@@ -3,7 +3,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { RichHero, Statement, FeatureRow, Quote, CtaBand } from '@/components/storefront/rich';
 
-export const metadata: Metadata = { title: 'Our Builders | GS Chairs', description: 'Meet the American craftsmen who build every GS Chairs piece by hand in small workshops.' };
+export const metadata: Metadata = { title: 'Our Builders | Keppler Commercial Furnishing', description: 'Meet the American craftsmen who build every Keppler Commercial Furnishing piece by hand in small workshops.' };
 
 export default function OurBuildersPage() {
   return (
@@ -14,7 +14,7 @@ export default function OurBuildersPage() {
           image="/brand/craft.png"
           eyebrow="Our Company"
           title="Made by hands that have done it for generations."
-          subtitle="Every GS Chairs piece is built by a real person in a small American workshop, not stamped out on a line."
+          subtitle="Every Keppler piece is built by a real person in a small American workshop, not stamped out on a line."
         />
 
         <Statement>
@@ -35,7 +35,7 @@ export default function OurBuildersPage() {
           body="Many of our builders learned from their fathers, who learned from theirs. Hand-cut joinery and a feel for how wood moves with the seasons are not things you can rush. Our makers have spent decades earning them."
         />
 
-        <Quote text="They build small on purpose, so every piece gets the attention it deserves." attribution="On the GS Chairs Workshops" />
+        <Quote text="They build small on purpose, so every piece gets the attention it deserves." attribution="On the Keppler Workshops" />
 
         <CtaBand
           title="Own a piece of the work."

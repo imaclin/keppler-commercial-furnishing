@@ -27,5 +27,5 @@ export async function GET(request: NextRequest) {
     body = rows.map((r) => [r.id.slice(0, 8), r.created_at, r.name, r.status, `$${r.total}`, r.eta ?? '']);
   }
   const out = csv([header, ...body]);
-  return new NextResponse(out, { headers: { 'Content-Type': 'text/csv', 'Content-Disposition': `attachment; filename="gs-chairs-${type}.csv"` } });
+  return new NextResponse(out, { headers: { 'Content-Type': 'text/csv', 'Content-Disposition': `attachment; filename="keppler-${type}.csv"` } });
 }

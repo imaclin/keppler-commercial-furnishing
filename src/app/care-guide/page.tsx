@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { ContentPage } from '@/components/storefront/ContentPage';
 
-export const metadata: Metadata = { title: 'Care Guide | GS Chairs', description: 'How to care for your solid-wood GS Chairs chair so it lasts for generations.' };
+export const metadata: Metadata = { title: 'Care Guide | Keppler Commercial Furnishing', description: 'How to care for your solid-wood Keppler chair so it lasts for generations.' };
 
 export default function CareGuidePage() {
   return (

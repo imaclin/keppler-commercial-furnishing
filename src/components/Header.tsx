@@ -36,7 +36,7 @@ export function Header() {
         </button>
 
         <Link href="/" className="text-center" onClick={() => setOpen(false)}>
-          <span className="serif block text-xl font-semibold tracking-[0.2em] pl-[0.2em] text-[var(--espresso)] leading-none whitespace-nowrap md:text-3xl md:tracking-[0.24em] md:pl-[0.24em]">GS CHAIRS</span>
+          <span className="serif block text-xl font-semibold tracking-[0.2em] pl-[0.2em] text-[var(--espresso)] leading-none whitespace-nowrap md:text-3xl md:tracking-[0.24em] md:pl-[0.24em]">KEPPLER</span>
         </Link>
 
         {/* Right: utility icons (Search, Consultation, Account) */}

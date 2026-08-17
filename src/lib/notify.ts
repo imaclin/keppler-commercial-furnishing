@@ -1,6 +1,11 @@
 import { Resend } from 'resend';
 
-const FROM = process.env.GS_EMAIL_FROM ?? 'GS Chairs <noreply@gschairs.test>';
+// KEPPLER_EMAIL_FROM is the name going forward; GS_EMAIL_FROM stays as a
+// fallback because that is the variable already set in Vercel, and email must
+// not silently break between the rename deploy and the env var being updated.
+const FROM = process.env.KEPPLER_EMAIL_FROM
+  ?? process.env.GS_EMAIL_FROM
+  ?? 'Keppler Commercial Furnishing <noreply@keppler.test>';
 
 export function emailEnabled(): boolean {
   return Boolean(process.env.RESEND_API_KEY);

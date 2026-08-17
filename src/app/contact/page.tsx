@@ -4,7 +4,7 @@ import { Mail, Phone, MapPin } from 'lucide-react';
 import { ContentPage } from '@/components/storefront/ContentPage';
 import { getSiteSettings } from '@/lib/settings';
 
-export const metadata: Metadata = { title: 'Contact | GS Chairs', description: 'Get in touch with GS Chairs about a piece, a custom commission, or a design consultation.' };
+export const metadata: Metadata = { title: 'Contact | Keppler Commercial Furnishing', description: 'Get in touch with Keppler Commercial Furnishing about a piece, a custom commission, or a design consultation.' };
 
 export const dynamic = 'force-dynamic';
 

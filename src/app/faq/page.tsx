@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { ContentPage } from '@/components/storefront/ContentPage';
 
-export const metadata: Metadata = { title: 'FAQ | GS Chairs', description: 'Answers to common questions about GS Chairs furniture, ordering, wood, delivery, and care.' };
+export const metadata: Metadata = { title: 'FAQ | Keppler Commercial Furnishing', description: 'Answers to common questions about Keppler furniture, ordering, wood, delivery, and care.' };
 
 export default function FaqPage() {
   return (

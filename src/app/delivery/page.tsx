@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { ContentPage } from '@/components/storefront/ContentPage';
 
-export const metadata: Metadata = { title: 'Delivery | GS Chairs', description: 'Complimentary white-glove delivery on every GS Chairs piece, scheduled around you.' };
+export const metadata: Metadata = { title: 'Delivery | Keppler Commercial Furnishing', description: 'Complimentary white-glove delivery on every Keppler piece, scheduled around you.' };
 
 export default function DeliveryPage() {
   return (

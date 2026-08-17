@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ContentPage } from '@/components/storefront/ContentPage';
 
-export const metadata: Metadata = { title: 'Returns & Exchanges | GS Chairs', description: 'How returns, exchanges, and transit-damage claims work for made-to-order GS Chairs furniture.' };
+export const metadata: Metadata = { title: 'Returns & Exchanges | Keppler Commercial Furnishing', description: 'How returns, exchanges, and transit-damage claims work for made-to-order Keppler Commercial Furnishing furniture.' };
 
 export default function ReturnsPage() {
   return (

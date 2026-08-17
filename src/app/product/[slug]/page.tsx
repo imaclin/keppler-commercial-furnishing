@@ -14,9 +14,9 @@ import { isFavorited } from '@/lib/account';
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const product = await getStorefrontProduct(slug);
-  if (!product) return { title: 'Not found | GS Chairs' };
+  if (!product) return { title: 'Not found | Keppler Commercial Furnishing' };
   return {
-    title: `${product.name} | GS Chairs`,
+    title: `${product.name} | Keppler Commercial Furnishing`,
     description: product.short_description ?? 'Handcrafted American solid-wood furniture.',
   };
 }
@@ -36,7 +36,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     description: product.short_description ?? product.story ?? undefined,
     category: product.category,
     image: product.images.map((i) => i.url),
-    brand: { '@type': 'Brand', name: 'GS Chairs' },
+    brand: { '@type': 'Brand', name: 'Keppler Commercial Furnishing' },
     material: product.woods.map((w) => w.name).join(', ') || undefined,
     offers: {
       '@type': 'Offer',

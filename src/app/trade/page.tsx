@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ContentPage } from '@/components/storefront/ContentPage';
 
-export const metadata: Metadata = { title: 'Trade & Business | GS Chairs', description: 'GS Chairs works with designers, architects, and hospitality clients on trade pricing and contract orders.' };
+export const metadata: Metadata = { title: 'Trade & Business | Keppler Commercial Furnishing', description: 'Keppler Commercial Furnishing works with designers, architects, and hospitality clients on trade pricing and contract orders.' };
 
 export default function TradePage() {
   return (

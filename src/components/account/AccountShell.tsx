@@ -44,7 +44,7 @@ export function AccountShell({ name, children }: { name: string; children: React
         }`}
       >
         <div className="flex items-center justify-between px-7 md:block">
-          <Link href="/" className="serif block text-2xl tracking-[0.2em] pl-[0.2em] text-[var(--espresso)] whitespace-nowrap md:text-center">GS CHAIRS</Link>
+          <Link href="/" className="serif block text-2xl tracking-[0.2em] pl-[0.2em] text-[var(--espresso)] whitespace-nowrap md:text-center">KEPPLER</Link>
           <button onClick={() => setMobileOpen(false)} aria-label="Close menu" className="text-[var(--stone)] md:hidden"><X className="h-5 w-5" /></button>
         </div>
         <div className="mb-8 px-7 text-[8px] uppercase tracking-[0.4em] text-[var(--stone)] md:text-center">My Account</div>
