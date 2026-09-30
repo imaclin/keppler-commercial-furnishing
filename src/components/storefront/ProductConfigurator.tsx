@@ -7,10 +7,14 @@ import { formatPriceCents } from '@/lib/format';
 import { AddToCartButton } from '@/components/storefront/AddToCartButton';
 import { FavoriteButton } from '@/components/storefront/FavoriteButton';
 import { SampleRequestForm } from '@/components/storefront/SampleRequestForm';
+import { SpinViewer } from '@/components/storefront/SpinViewer';
 import type { StorefrontProduct } from '@/lib/types';
 
 export function ProductConfigurator({ product, initialFavorited, isLoggedIn = false }: { product: StorefrontProduct; initialFavorited: boolean; isLoggedIn?: boolean }) {
   const [activeImg, setActiveImg] = useState(product.images[0]?.url ?? null);
+  // The 360 view is opt-in: its frames only download once the customer picks it.
+  const [spinOpen, setSpinOpen] = useState(false);
+  const hasSpin = product.spin.length > 1;
   const [woodId, setWoodId] = useState(product.woods[0]?.id ?? '');
   const [finishId, setFinishId] = useState(product.finishes[0]?.id ?? '');
   const [sizeId, setSizeId] = useState(product.sizes[0]?.id ?? '');
@@ -28,14 +32,37 @@ export function ProductConfigurator({ product, initialFavorited, isLoggedIn = fa
     <div className="grid gap-12 md:grid-cols-2">
       <div>
         <div className="aspect-square overflow-hidden bg-[var(--bone)]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          {activeImg && <img src={activeImg} alt={product.name} className="h-full w-full object-cover" />}
+          {spinOpen && hasSpin ? (
+            <SpinViewer frames={product.spin} alt={product.name} />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            activeImg && <img src={activeImg} alt={product.name} className="h-full w-full object-cover" />
+          )}
         </div>
-        {product.images.length > 1 && (
-          <div className="mt-3 flex gap-3">
+        {(product.images.length > 1 || hasSpin) && (
+          <div className="mt-3 flex flex-wrap gap-3">
+            {hasSpin && (
+              <button
+                type="button"
+                onClick={() => setSpinOpen(true)}
+                aria-pressed={spinOpen}
+                aria-label="Show 360 degree view"
+                className={`relative h-16 w-16 overflow-hidden border bg-white ${spinOpen ? 'border-[var(--walnut)]' : 'border-[var(--line)]'}`}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={product.spin[0]} alt="" className="h-full w-full object-contain opacity-60" />
+                <span className="absolute inset-0 grid place-items-center text-xs font-semibold tracking-[0.06em] text-[var(--ink)]">360°</span>
+              </button>
+            )}
             {product.images.map((img) => (
               // eslint-disable-next-line @next/next/no-img-element
-              <button key={img.id} onClick={() => setActiveImg(img.url)} className={`h-16 w-16 overflow-hidden border ${activeImg === img.url ? 'border-[var(--walnut)]' : 'border-[var(--line)]'}`}>
+              <button
+                key={img.id}
+                type="button"
+                onClick={() => { setActiveImg(img.url); setSpinOpen(false); }}
+                aria-pressed={!spinOpen && activeImg === img.url}
+                className={`h-16 w-16 overflow-hidden border ${!spinOpen && activeImg === img.url ? 'border-[var(--walnut)]' : 'border-[var(--line)]'}`}
+              >
                 <img src={img.url} alt="" className="h-full w-full object-cover" />
               </button>
             ))}

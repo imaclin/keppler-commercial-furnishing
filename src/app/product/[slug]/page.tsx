@@ -9,24 +9,30 @@ import { CtaBand } from '@/components/storefront/rich';
 import { ProductCard } from '@/components/storefront/ProductCard';
 import { getStorefrontProduct, listPublished } from '@/lib/catalog';
 import { getProfile } from '@/lib/auth';
+import type { Profile } from '@/lib/types';
+
+const isStaff = (p: Profile | null) => p?.role === 'staff' || p?.role === 'admin';
 import { isFavorited } from '@/lib/account';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const product = await getStorefrontProduct(slug);
+  const product = await getStorefrontProduct(slug, { includeDrafts: isStaff(await getProfile()) });
   if (!product) return { title: 'Not found | Keppler Commercial Furnishing' };
   return {
     title: `${product.name} | Keppler Commercial Furnishing`,
     description: product.short_description ?? 'Handcrafted American solid-wood furniture.',
+    // A draft only renders for signed-in staff, but never let one be indexed.
+    ...(product.status === 'draft' ? { robots: { index: false, follow: false } } : {}),
   };
 }
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = await getStorefrontProduct(slug);
-  if (!product) notFound();
-  const related = (await listPublished(product.category, {})).filter((p) => p.id !== product.id).slice(0, 4);
   const profile = await getProfile();
+  const product = await getStorefrontProduct(slug, { includeDrafts: isStaff(profile) });
+  if (!product) notFound();
+  const isDraft = product.status === 'draft';
+  const related = (await listPublished(product.category, {})).filter((p) => p.id !== product.id).slice(0, 4);
   const initialFavorited = profile ? await isFavorited(profile.id, product.id) : false;
 
   const jsonLd = {
@@ -51,6 +57,13 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Header />
       <main>
+        {isDraft && (
+          <div className="border-b border-[var(--line)] bg-[var(--bone)]">
+            <div className="mx-auto max-w-[1320px] px-6 md:px-14 py-3 text-sm text-[var(--ink)]">
+              <strong>Draft preview.</strong> Only signed-in staff can see this page. Publish it from the admin panel to put it on the site.
+            </div>
+          </div>
+        )}
         <div className="mx-auto max-w-[1320px] px-6 md:px-14 py-10">
           <div className="mb-6 text-[11px] uppercase tracking-[0.12em] text-[var(--stone)]">
             <Link href="/">Home</Link> / <Link href={`/${product.category}s`} className="capitalize">{product.category}s</Link> / {product.name}

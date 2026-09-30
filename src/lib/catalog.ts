@@ -189,15 +189,21 @@ export async function listFeatured(limit = 4): Promise<StorefrontCard[]> {
   return query<StorefrontCard>(`${CARD_SELECT} and p.featured = true order by p.created_at desc limit ${limit}`);
 }
 
-export async function getStorefrontProduct(slug: string): Promise<StorefrontProduct | null> {
+// The public only ever sees published products. includeDrafts is for staff, so a
+// product can be checked on its real page before it goes live; the caller is
+// responsible for having verified the viewer is staff.
+export async function getStorefrontProduct(
+  slug: string,
+  opts: { includeDrafts?: boolean } = {},
+): Promise<StorefrontProduct | null> {
   const product = await queryOne<StorefrontProduct>(
     `select p.*, c.name as collection_name from products p
        left join collections c on c.id = p.collection_id
-      where p.slug = $1 and p.status = 'published'`,
+      where p.slug = $1 ${opts.includeDrafts ? '' : "and p.status = 'published'"}`,
     [slug],
   );
   if (!product) return null;
-  const [images, woods, finishes, sizes] = await Promise.all([
+  const [images, woods, finishes, sizes, spin] = await Promise.all([
     query<ProductImage>('select * from product_images where product_id = $1 order by sort_order', [product.id]),
     query<ConfigOption>(
       `select w.id, w.name, w.swatch_color, pw.price_delta_cents from product_woods pw
@@ -206,8 +212,9 @@ export async function getStorefrontProduct(slug: string): Promise<StorefrontProd
       `select f.id, f.name, f.swatch_color, pf.price_delta_cents from product_finishes pf
          join finishes f on f.id = pf.finish_id where pf.product_id = $1 order by f.sort_order`, [product.id]),
     query<ProductSize>('select * from product_sizes where product_id = $1 order by sort_order', [product.id]),
+    query<{ url: string }>('select url from product_spin_frames where product_id = $1 order by sort_order', [product.id]),
   ]);
-  return { ...product, images, woods, finishes, sizes };
+  return { ...product, images, woods, finishes, sizes, spin: spin.map((f) => f.url) };
 }
 
 export async function getCollectionBySlug(slug: string): Promise<{ id: string; name: string; description: string | null } | null> {

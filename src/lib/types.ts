@@ -52,6 +52,8 @@ export type StorefrontProduct = Product & {
   woods: ConfigOption[];
   finishes: ConfigOption[];
   sizes: ProductSize[];
+  /** 360-degree view frame URLs in rotation order. Empty when the product has no spin. */
+  spin: string[];
 };
 
 export type SampleRequestRow = {
