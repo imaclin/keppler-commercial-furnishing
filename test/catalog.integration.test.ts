@@ -1,12 +1,12 @@
 import { describe, it, expect, afterAll } from 'vitest';
-import { pool, query } from '@/lib/db';
+import { closePool, query } from '@/lib/db';
 import { createProduct, updateProduct, getProductById, type ProductInput } from '@/lib/catalog';
 
 // Integration test against the local hw database (requires npm run db:reset, which
 // seeds 4 woods + 4 finishes). Proves a product and all its option relations
 // round-trip through the real data layer, and that updateProduct replaces
 // relations wholesale. Cleans up the product it creates (cascade clears relations).
-afterAll(() => pool.end());
+afterAll(() => closePool());
 
 describe('catalog product round-trip (integration)', () => {
   it('creates a product with woods/finishes/sizes/images and reads them back, then updates', async () => {

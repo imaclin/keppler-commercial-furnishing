@@ -1,0 +1,22 @@
+{
+  // Cloudflare Workers deployment of the Next.js app, built by @opennextjs/cloudflare.
+  // `npm run build:cf` writes .open-next/, `npm run deploy:cf` pushes it.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "kepplercf",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-09-01",
+  // node:* modules for pg (TCP + TLS to Postgres), bcrypt, and Next's runtime.
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": { "enabled": true },
+  "vars": {
+    "NEXT_PUBLIC_MEDIA_BASE_URL": "https://poetausercontent.com"
+  }
+  // Secrets (set with `wrangler secret put`, never here):
+  //   DATABASE_URL                 Postgres connection string
+  //   R2_ENDPOINT, R2_BUCKET, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY
+  //   RESEND_API_KEY, KEPPLER_EMAIL_FROM (optional; email is off without them)
+}

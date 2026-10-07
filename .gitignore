@@ -43,3 +43,8 @@ next-env.d.ts
 # uploaded images (dev local storage)
 /public/uploads/*
 !/public/uploads/.gitkeep
+
+# OpenNext / Cloudflare build output
+/.open-next/
+/.wrangler/
+/.dev.vars
