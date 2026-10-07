@@ -12,14 +12,20 @@
     "binding": "ASSETS"
   },
   "observability": { "enabled": true },
+  // Pull-request previews: `wrangler versions upload --preview-alias` gives each
+  // PR its own URL on this Worker without touching production.
+  "preview_urls": true,
+  // Media (product photos, 360 frames, admin uploads) is served by this app at
+  // /media/<key>. Customer message attachments are private: /uploads/<name>
+  // checks the session before reading from PRIVATE.
+  "r2_buckets": [
+    { "binding": "MEDIA", "bucket_name": "keppler-media" },
+    { "binding": "PRIVATE", "bucket_name": "keppler-private" }
+  ],
   // Hyperdrive keeps a warm pool of Postgres connections at the edge; each
   // request borrows one instead of doing its own TLS handshake with Neon.
   "hyperdrive": [{ "binding": "HYPERDRIVE", "id": "51001a96c8d148f7bf212167cf438922", "localConnectionString": "postgresql://expando@localhost:5432/gs_chairs" }],
-  "vars": {
-    "NEXT_PUBLIC_MEDIA_BASE_URL": "https://poetausercontent.com"
-  }
   // Secrets (set with `wrangler secret put`, never here):
-  //   DATABASE_URL                 Postgres connection string
-  //   R2_ENDPOINT, R2_BUCKET, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY
+  //   DATABASE_URL                 Postgres connection string (fallback when no Hyperdrive)
   //   RESEND_API_KEY, KEPPLER_EMAIL_FROM (optional; email is off without them)
 }
