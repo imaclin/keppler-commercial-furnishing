@@ -1,4 +1,4 @@
-import { query, queryOne, transaction } from '@/lib/db';
+import { query, queryOne, run, batch } from '@/lib/db';
 import type { Order, OrderItem, OrderStatusEvent, OrderStatus } from '@/lib/types';
 
 export async function listOrdersForCustomer(customerId: string): Promise<Order[]> {
@@ -36,12 +36,15 @@ export type AdminOrderRow = Order & {
   overdue: boolean;
 };
 
+// est_delivery_date is YYYY-MM-DD text, so it compares directly with date('now').
+const OVERDUE = "o.status not in ('delivered','cancelled') and o.est_delivery_date is not null and o.est_delivery_date < date('now')";
+
 export async function listOrdersForAdminRich(opts: { status?: string; q?: string } = {}): Promise<AdminOrderRow[]> {
   const params: unknown[] = [];
   let where = 'where 1=1';
   if (opts.status && opts.status !== 'all') {
     if (opts.status === 'overdue') {
-      where += " and o.status not in ('delivered','cancelled') and o.est_delivery_date is not null and o.est_delivery_date < now()::date";
+      where += ` and ${OVERDUE}`;
     } else {
       params.push(opts.status);
       where += ` and o.status = $${params.length}`;
@@ -49,14 +52,14 @@ export async function listOrdersForAdminRich(opts: { status?: string; q?: string
   }
   if (opts.q) {
     params.push(`%${opts.q}%`);
-    where += ` and pr.name ilike $${params.length}`;
+    where += ` and pr.name like $${params.length}`;
   }
   return query<AdminOrderRow>(`
     select o.*, pr.name as customer_name,
-      (select count(*)::int from order_items i where i.order_id = o.id) as item_count,
+      (select count(*) from order_items i where i.order_id = o.id) as item_count,
       (select title_snapshot from order_items i where i.order_id = o.id limit 1) as first_item,
       (select pi.url from order_items i join product_images pi on pi.product_id = i.product_id where i.order_id = o.id order by pi.sort_order limit 1) as first_image,
-      (o.status not in ('delivered','cancelled') and o.est_delivery_date is not null and o.est_delivery_date < now()::date) as overdue
+      (${OVERDUE}) as overdue
     from orders o join profiles pr on pr.id = o.customer_id
     ${where} order by o.created_at desc limit 200`, params);
 }
@@ -73,28 +76,30 @@ export async function getOrderForAdmin(id: string): Promise<(Order & { customer_
   return { ...order, items, history };
 }
 
+// Check, then write the status and its history entry together. The update
+// re-checks the current status so two staff advancing at once cannot double up.
 export async function advanceOrderStatus(orderId: string, status: OrderStatus, note: string | null): Promise<void> {
-  await transaction(async (client) => {
-    const { rows } = await client.query('select status from orders where id = $1 for update', [orderId]);
-    const current = rows[0]?.status as OrderStatus | undefined;
-    if (!current || current === 'cancelled' || current === 'delivered') {
-      throw new Error('Order is not in an advanceable state');
-    }
-    if (current === status) return; // no-op, avoid duplicate history
-    await client.query('update orders set status = $2 where id = $1', [orderId, status]);
-    await client.query('insert into order_status_history (order_id, status, note) values ($1, $2, $3)', [orderId, status, note]);
-  });
+  const row = await queryOne<{ status: OrderStatus }>('select status from orders where id = $1', [orderId]);
+  const current = row?.status;
+  if (!current || current === 'cancelled' || current === 'delivered') {
+    throw new Error('Order is not in an advanceable state');
+  }
+  if (current === status) return; // no-op, avoid duplicate history
+  await batch([
+    { sql: 'update orders set status = $2 where id = $1 and status = $3', params: [orderId, status, current] },
+    { sql: 'insert into order_status_history (order_id, status, note) values ($1, $2, $3)', params: [orderId, status, note] },
+  ]);
 }
 
 export async function setEstDelivery(orderId: string, date: string | null): Promise<void> {
-  await query('update orders set est_delivery_date = $2 where id = $1', [orderId, date]);
+  await run('update orders set est_delivery_date = $2 where id = $1', [orderId, date]);
 }
 
 export async function orderCounts(): Promise<{ open: number; quotesPending: number; inProduction: number }> {
-  const row = await queryOne<{ open: string; pending: string; prod: string }>(
-    `select (select count(*) from orders where status not in ('delivered','cancelled'))::text as open,
-            (select count(*) from quotes where status = 'requested')::text as pending,
-            (select count(*) from orders where status = 'in_production')::text as prod`,
+  const row = await queryOne<{ open: number; pending: number; prod: number }>(
+    `select (select count(*) from orders where status not in ('delivered','cancelled')) as open,
+            (select count(*) from quotes where status = 'requested') as pending,
+            (select count(*) from orders where status = 'in_production') as prod`,
   );
   return { open: Number(row?.open ?? 0), quotesPending: Number(row?.pending ?? 0), inProduction: Number(row?.prod ?? 0) };
 }

@@ -48,3 +48,6 @@ next-env.d.ts
 /.open-next/
 /.wrangler/
 /.dev.vars
+
+# local SQLite for scripts/tests
+/.data/

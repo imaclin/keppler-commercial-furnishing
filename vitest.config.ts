@@ -5,7 +5,8 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['test/**/*.test.ts'],
-    env: { DATABASE_URL: process.env.DATABASE_URL ?? 'postgresql://expando@localhost:5432/gs_chairs' },
+    // Each test run gets a fresh SQLite built from db/schema.sql + db/seed.sql.
+    env: { SQLITE_PATH: ':memory:' },
   },
   resolve: { alias: { '@': path.resolve(__dirname, 'src') } },
 });

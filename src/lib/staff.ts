@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { query, queryOne, transaction } from '@/lib/db';
+import { query, queryOne, run, batch, newId, NOW } from '@/lib/db';
 
 export type StaffMember = {
   id: string;
@@ -20,14 +20,15 @@ export async function listStaff(): Promise<StaffMember[]> {
 
 /** Create a new staff/admin account. Throws 'email_taken' if the email exists. */
 export async function createStaffMember(args: { email: string; name: string; password: string; role: 'staff' | 'admin' }): Promise<void> {
-  await transaction(async (client) => {
-    const { rows } = await client.query('select 1 from users where email = $1', [args.email]);
-    if (rows.length > 0) throw new Error('email_taken');
-    const hash = await bcrypt.hash(args.password, 10);
-    const inserted = await client.query('insert into users (email, password_hash) values ($1, $2) returning id', [args.email, hash]);
-    const uid = inserted.rows[0].id as string;
-    await client.query('insert into profiles (id, email, name, role) values ($1, $2, $3, $4)', [uid, args.email, args.name, args.role]);
-  });
+  const existing = await queryOne('select 1 as one from users where email = $1', [args.email]);
+  if (existing) throw new Error('email_taken');
+  const hash = await bcrypt.hash(args.password, 10);
+  const uid = newId();
+  // users.email is unique, so a race here fails the batch rather than duplicating.
+  await batch([
+    { sql: 'insert into users (id, email, password_hash) values ($1, $2, $3)', params: [uid, args.email, hash] },
+    { sql: 'insert into profiles (id, email, name, role) values ($1, $2, $3, $4)', params: [uid, args.email, args.name, args.role] },
+  ]);
 }
 
 export async function getStaffMember(id: string): Promise<StaffMember | null> {
@@ -40,11 +41,11 @@ export async function getStaffMember(id: string): Promise<StaffMember | null> {
 }
 
 export async function setStaffRole(userId: string, role: 'customer' | 'staff' | 'admin'): Promise<void> {
-  await query('update profiles set role = $2 where id = $1', [userId, role]);
+  await run('update profiles set role = $2 where id = $1', [userId, role]);
 }
 
 export async function countAdmins(): Promise<number> {
-  const row = await queryOne<{ c: string }>("select count(*)::text as c from profiles where role = 'admin'");
+  const row = await queryOne<{ c: number }>("select count(*) as c from profiles where role = 'admin'");
   return Number(row?.c ?? 0);
 }
 
@@ -61,7 +62,7 @@ export type StaffInvite = {
 };
 
 export async function createInvite(args: { token: string; email: string | null; role: 'staff' | 'admin'; invitedBy: string; expiresAt: string | null }): Promise<void> {
-  await query(
+  await run(
     'insert into staff_invites (token, email, role, invited_by, expires_at) values ($1, $2, $3, $4, $5)',
     [args.token, args.email, args.role, args.invitedBy, args.expiresAt],
   );
@@ -72,51 +73,45 @@ export async function listPendingInvites(): Promise<StaffInvite[]> {
   return query<StaffInvite>(
     `select i.id, i.token, i.email, i.role, i.created_at, i.expires_at, pr.name as invited_by_name
        from staff_invites i left join profiles pr on pr.id = i.invited_by
-       where i.accepted_at is null and i.revoked = false
-         and (i.expires_at is null or i.expires_at > now())
+       where i.accepted_at is null and i.revoked = 0
+         and (i.expires_at is null or i.expires_at > ${NOW})
        order by i.created_at desc`,
   );
 }
 
 export async function revokeInvite(id: string): Promise<void> {
-  await query('update staff_invites set revoked = true where id = $1', [id]);
+  await run('update staff_invites set revoked = 1 where id = $1', [id]);
 }
 
 export type InviteForRedemption = { id: string; email: string | null; role: 'staff' | 'admin' };
 
+const REDEEMABLE = `from staff_invites
+       where token = $1 and accepted_at is null and revoked = 0
+         and (expires_at is null or expires_at > ${NOW})`;
+
 /** Returns the invite if the token is valid and redeemable, else null. */
 export async function getRedeemableInvite(token: string): Promise<InviteForRedemption | null> {
-  return queryOne<InviteForRedemption>(
-    `select id, email, role from staff_invites
-       where token = $1 and accepted_at is null and revoked = false
-         and (expires_at is null or expires_at > now())`,
-    [token],
-  );
+  return queryOne<InviteForRedemption>(`select id, email, role ${REDEEMABLE}`, [token]);
 }
 
 /** Redeem an invite: create the staff/admin account and mark the invite used.
  *  Returns the new user id. Throws 'email_taken', 'invalid_invite'. */
 export async function redeemInvite(token: string, args: { name: string; email: string; password: string }): Promise<string> {
-  return transaction(async (client) => {
-    const { rows: inv } = await client.query(
-      `select id, email, role from staff_invites
-         where token = $1 and accepted_at is null and revoked = false
-           and (expires_at is null or expires_at > now()) for update`,
-      [token],
-    );
-    if (inv.length === 0) throw new Error('invalid_invite');
-    const invite = inv[0] as { id: string; email: string | null; role: 'staff' | 'admin' };
-    // If the invite is pinned to an email, enforce it.
-    const email = (invite.email ?? args.email).trim().toLowerCase();
+  const invite = await getRedeemableInvite(token);
+  if (!invite) throw new Error('invalid_invite');
+  // If the invite is pinned to an email, enforce it.
+  const email = (invite.email ?? args.email).trim().toLowerCase();
 
-    const { rows: existing } = await client.query('select 1 from users where email = $1', [email]);
-    if (existing.length > 0) throw new Error('email_taken');
+  const existing = await queryOne('select 1 as one from users where email = $1', [email]);
+  if (existing) throw new Error('email_taken');
 
-    const hash = await bcrypt.hash(args.password, 10);
-    const created = await client.query('insert into users (email, password_hash) values ($1, $2) returning id', [email, hash]);
-    const uid = created.rows[0].id as string;
-    await client.query('insert into profiles (id, email, name, role) values ($1, $2, $3, $4)', [uid, email, args.name.trim(), invite.role]);
-    await client.query('update staff_invites set accepted_at = now(), accepted_user_id = $2 where id = $1', [invite.id, uid]);
-    return uid;
-  });
+  const hash = await bcrypt.hash(args.password, 10);
+  const uid = newId();
+  await batch([
+    { sql: 'insert into users (id, email, password_hash) values ($1, $2, $3)', params: [uid, email, hash] },
+    { sql: 'insert into profiles (id, email, name, role) values ($1, $2, $3, $4)', params: [uid, email, args.name.trim(), invite.role] },
+    // The guard keeps a token from being redeemed twice by two people at once.
+    { sql: `update staff_invites set accepted_at = ${NOW}, accepted_user_id = $2 where id = $1 and accepted_at is null`, params: [invite.id, uid] },
+  ]);
+  return uid;
 }

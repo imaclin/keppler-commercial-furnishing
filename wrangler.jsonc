@@ -22,10 +22,9 @@
     { "binding": "MEDIA", "bucket_name": "keppler-media" },
     { "binding": "PRIVATE", "bucket_name": "keppler-private" }
   ],
-  // Hyperdrive keeps a warm pool of Postgres connections at the edge; each
-  // request borrows one instead of doing its own TLS handshake with Neon.
-  "hyperdrive": [{ "binding": "HYPERDRIVE", "id": "51001a96c8d148f7bf212167cf438922", "localConnectionString": "postgresql://expando@localhost:5432/gs_chairs" }],
+  // The database. `next dev` gets a local copy of it from the adapter's dev
+  // shim (npm run db:reset creates it); tests use Node's SQLite instead.
+  "d1_databases": [{ "binding": "DB", "database_name": "kepplercf", "database_id": "242d88aa-0f00-4537-a125-5de798e34a2d" }],
   // Secrets (set with `wrangler secret put`, never here):
-  //   DATABASE_URL                 Postgres connection string (fallback when no Hyperdrive)
   //   RESEND_API_KEY, KEPPLER_EMAIL_FROM (optional; email is off without them)
 }

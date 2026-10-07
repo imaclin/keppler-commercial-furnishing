@@ -34,7 +34,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ path: s
   if (!profile) return new Response('Sign in to open this file.', { status: 401 });
   if (profile.role === 'customer') {
     const own = await queryOne<{ id: string }>(
-      `select id from messages where customer_id = $1 and attachments::text like $2 limit 1`,
+      `select id from messages where customer_id = $1 and attachments like $2 limit 1`,
       [profile.id, `%/uploads/${name}%`],
     );
     if (!own) return new Response('Not found', { status: 404 });

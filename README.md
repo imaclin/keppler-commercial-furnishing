@@ -16,42 +16,40 @@ email/password session scheme, not a third-party provider.
 
 ## Local development
 
-Requires Node 24 and a local Postgres server.
+Requires Node 24 (its built-in SQLite runs the tests).
 
 ```bash
 npm install
-createdb gs_chairs        # once
-npm run db:reset          # builds schema and seeds demo data
+npm run db:reset          # creates the local database from db/schema.sql + db/seed.sql
 npm run dev               # http://localhost:3000
 ```
 
-The local database is still named `gs_chairs`. It was deliberately left alone
-during the rebrand so existing checkouts keep working; renaming it would break
-every developer's `.env.local` for no benefit.
+`next dev` talks to a local Cloudflare D1 (a SQLite file under `.wrangler/`),
+supplied by the Cloudflare adapter's dev shim. `npm run db:reset` rebuilds it; it
+never touches the live database. Production is a D1 database on Cloudflare,
+reached only through the Worker's `DB` binding, so there is no connection string
+anywhere.
 
-`npm run db:reset` runs `db/reset.sql` followed by every migration in
-`db/migrations/` in order. It drops and recreates the `public` schema, so only
-ever point it at a local database.
+`db/schema.sql` is the whole schema. `db/migrations/` holds the old Postgres
+migrations and is history only; schema changes edit `schema.sql` and are applied
+to production by hand with `wrangler d1 execute kepplercf --remote`.
 
-Seeded local accounts (these exist only in the local database, and every
-`db:reset` restores them). The addresses still carry the old branding because
-they live in already-applied migrations, which are history and are not rewritten:
+Seeded local account (local only; every `db:reset` restores it):
 
 | Account | Email | Password |
 | --- | --- | --- |
 | Staff admin | `admin@gschairs.test` | `hwadmin123` |
-| Customers | `sarah`, `david`, `anna` `@gschairs-demo.test` | `customer123` |
 
 Production uses different, rotated credentials. They are not stored in this
 repository.
 
 ## Environment
 
-Copy `.env.example` to `.env.local`.
+Secrets live on the Worker (`wrangler secret put`); `.dev.vars` holds local values
+for `wrangler dev`. Nothing is required today.
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
-| `DATABASE_URL` | yes | Postgres connection string |
 | `KEPPLER_EMAIL_FROM` | no | Sender for transactional email. Falls back to `GS_EMAIL_FROM`, then a placeholder. |
 | `RESEND_API_KEY` | no | Enables outbound email. Unset means email is a no-op. |
 
@@ -59,23 +57,19 @@ Copy `.env.example` to `.env.local`.
 does not break if only one of the two is set. Neither is set on the Worker, so
 production email is a no-op today.
 
-Keep `.env.local` pointed at your local database. Pointing it at production
-means local development writes to live client data.
-
 ## Tests
 
 ```bash
 npm test
 ```
 
-Vitest, including integration tests that hit a real local Postgres. Note that
-`vitest.config.ts` contains a hardcoded `DATABASE_URL` fallback which must stay
-in sync with the local database name.
+Vitest, including an integration test that runs the real data layer against an
+in-memory SQLite built from `db/schema.sql` and `db/seed.sql`.
 
 ## Deployment
 
 Hosted on Cloudflare Workers (Worker `kepplercf`, built with `@opennextjs/cloudflare`;
-config in `wrangler.jsonc`) with Postgres on Neon reached through Hyperdrive. Files
+config in `wrangler.jsonc`) with the database on Cloudflare D1. Files
 live in two R2 buckets: `keppler-media` (public, served by the app at `/media/<key>`)
 and `keppler-private` (customer attachments, served at `/uploads/<name>` to signed-in
 users only). The Worker reaches both through bindings, so no storage credentials exist.
@@ -83,24 +77,21 @@ users only). The Worker reaches both through bindings, so no storage credentials
 GitHub Actions (`.github/workflows/deploy.yml`) deploys `main` to production and gives
 every pull request a preview URL (`https://pr-<n>-kepplercf.<subdomain>.workers.dev`),
 posted as a comment on the PR. The workflow needs the repo secrets
-`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` and `DATABASE_URL` (the build
-prerenders a few pages that read site settings). To deploy manually instead:
+`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. To deploy manually instead:
 
 ```bash
 npm run deploy:cf
 ```
 
-`npm run preview:cf` runs the built Worker locally (`.dev.vars` holds `DATABASE_URL`).
+`npm run preview:cf` runs the built Worker locally against the local D1.
 Next is pinned to 16.3.x until the Cloudflare adapter supports 16.4.
 
-Migrations do not run automatically on deploy. Apply them to production
-explicitly, using the unpooled connection string:
+Schema changes are applied to production by hand, from `db/schema.sql` (new
+tables and indexes use `if not exists`, so it is safe to re-run):
 
 ```bash
-psql "$DATABASE_URL_UNPOOLED" -v ON_ERROR_STOP=1 -f db/migrations/00NN_name.sql
+npx wrangler d1 execute kepplercf --remote --file db/schema.sql
 ```
-
-Do not run `db/reset.sql` against production. It drops the schema.
 
 ## Branding
 

@@ -6,12 +6,6 @@ import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 initOpenNextCloudflareForDev();
 
 const nextConfig: NextConfig = {
-  // pg loads its Workers socket shim (pg-cloudflare) only at runtime, behind a
-  // check for the Workers user agent, so Next's file tracing never sees the
-  // require and leaves the package out of the server bundle. Pull it in by hand.
-  outputFileTracingIncludes: {
-    '/*': ['./node_modules/pg-cloudflare/**/*'],
-  },
   async redirects() {
     return [
       // /tables shipped in an earlier version of the catalog. The site sells

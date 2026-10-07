@@ -23,7 +23,7 @@ admin panel.
 | Layer | What it is |
 |---|---|
 | Framework | Next.js (App Router, TypeScript) |
-| Database | Neon Postgres (hosted; connection string lives in `.env.neon.local`, do not edit) |
+| Database | Cloudflare D1 (hosted SQLite). `npm run dev` uses a private local copy, so nothing you do locally touches real data. |
 | Files | Cloudflare R2 (product photos, customer attachments) |
 | Email | Not switched on yet (will be Cloudflare email once the site has its domain) |
 | Hosting | Cloudflare Workers. Pushing code to `main` on GitHub deploys automatically. Live at https://kepplercf.mb-9d2.workers.dev |
@@ -64,19 +64,20 @@ fix-forward under pressure. Tell Mac.
 
 ## Hard rules
 - Never push or merge to `main`. Previews via branches only; Mac merges.
-- Never edit or delete anything in `db/` (database migrations). Schema and data
+- Never edit or delete anything in `db/` (the database schema). Schema and data
   changes go through Mac.
-- Never run `npm run db:reset` or any command containing `psql`. There is live
-  customer and order data.
-- Never edit `.env.local`, `.env.neon.local`, or any `.env` file. They contain
-  secrets. Never print their contents into the chat either.
+- Never run any `wrangler d1` command with `--remote`. That is the live database,
+  with real customer and order data. `npm run db:reset` is fine: it only rebuilds
+  your local copy.
+- Never edit `.dev.vars` or any `.env` file. They contain secrets. Never print
+  their contents into the chat either.
 - Never install new packages (`npm install <thing>`) without checking with Mac.
 - Text, images, styling, and layout changes are all fair game on a branch.
 
 ## Everyday commands
 | Task | Command |
 |---|---|
-| Run the site locally | `npm run dev` then open http://localhost:3000 |
+| Run the site locally | `npm run dev` then open http://localhost:3000 (first time: `npm run db:reset` to create the local database) |
 | Run the tests | `npm test` |
 | Check nothing is broken before pushing | `npm run build` |
 | See what changed | `git status` and `git diff` |

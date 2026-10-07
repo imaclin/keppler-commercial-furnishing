@@ -1,4 +1,4 @@
-import { query, queryOne } from '@/lib/db';
+import { queryOne, run, NOW } from '@/lib/db';
 
 export type SiteSettings = {
   id: number;
@@ -32,9 +32,9 @@ export type SiteSettingsInput = {
 };
 
 export async function updateSiteSettings(input: SiteSettingsInput): Promise<void> {
-  await query(
+  await run(
     `update site_settings set site_title=$1, meta_description=$2, company_name=$3,
-       contact_email=$4, contact_phone=$5, address=$6, og_image_url=$7, updated_at=now()
+       contact_email=$4, contact_phone=$5, address=$6, og_image_url=$7, updated_at=${NOW}
      where id = 1`,
     [input.site_title, input.meta_description, input.company_name, input.contact_email,
      input.contact_phone, input.address, input.og_image_url],

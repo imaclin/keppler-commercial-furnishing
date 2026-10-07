@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { Inter, Cormorant_Garamond } from "next/font/google";
 import { getSiteSettings } from "@/lib/settings";
+
+// Every page reads site settings (title, contact details) from the database,
+// which only exists at request time on Workers. Rendering on demand keeps the
+// build free of database access and the settings always current.
+export const dynamic = "force-dynamic";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", weight: ["300", "400", "500"] });

@@ -1,25 +1,24 @@
-import { query, queryOne, transaction } from '@/lib/db';
+import { query, queryOne, batch, newId, type Statement } from '@/lib/db';
 import type { Quote, QuoteItem } from '@/lib/types';
 
 export async function createQuoteFromConfig(customerId: string, item: {
   productId: string | null; title: string; woodName: string | null; finishName: string | null;
   sizeLabel: string | null; unitPriceCents: number; configuration: Record<string, unknown> | null;
 }): Promise<string> {
-  return transaction(async (client) => {
-    const { rows } = await client.query(
-      `insert into quotes (customer_id, status, subtotal_cents, total_cents)
-       values ($1, 'requested', $2, $2) returning id`,
-      [customerId, item.unitPriceCents],
-    );
-    const id = rows[0].id as string;
-    await client.query(
-      `insert into quote_items (quote_id, product_id, title_snapshot, wood_name, finish_name, size_label, quantity, unit_price_cents, configuration_json)
-       values ($1, $2, $3, $4, $5, $6, 1, $7, $8)`,
-      [id, item.productId, item.title, item.woodName, item.finishName, item.sizeLabel, item.unitPriceCents,
-       item.configuration ? JSON.stringify(item.configuration) : null],
-    );
-    return id;
-  });
+  const id = newId();
+  await batch([
+    {
+      sql: `insert into quotes (id, customer_id, status, subtotal_cents, total_cents) values ($1, $2, 'requested', $3, $3)`,
+      params: [id, customerId, item.unitPriceCents],
+    },
+    {
+      sql: `insert into quote_items (quote_id, product_id, title_snapshot, wood_name, finish_name, size_label, quantity, unit_price_cents, configuration_json)
+            values ($1, $2, $3, $4, $5, $6, 1, $7, $8)`,
+      params: [id, item.productId, item.title, item.woodName, item.finishName, item.sizeLabel, item.unitPriceCents,
+        item.configuration ? JSON.stringify(item.configuration) : null],
+    },
+  ]);
+  return id;
 }
 
 export type CartQuoteItem = {
@@ -29,24 +28,22 @@ export type CartQuoteItem = {
 
 // Create a single quote request from a cart of configured items.
 export async function createQuoteFromItems(customerId: string, items: CartQuoteItem[]): Promise<string> {
-  return transaction(async (client) => {
-    const subtotal = items.reduce((s, i) => s + i.unitPriceCents * Math.max(1, i.quantity), 0);
-    const { rows } = await client.query(
-      `insert into quotes (customer_id, status, subtotal_cents, total_cents)
-       values ($1, 'requested', $2, $2) returning id`,
-      [customerId, subtotal],
-    );
-    const id = rows[0].id as string;
-    for (const it of items) {
-      await client.query(
-        `insert into quote_items (quote_id, product_id, title_snapshot, wood_name, finish_name, size_label, quantity, unit_price_cents, configuration_json)
-         values ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-        [id, it.productId, it.title, it.woodName, it.finishName, it.sizeLabel, Math.max(1, it.quantity), it.unitPriceCents,
-         it.configuration ? JSON.stringify(it.configuration) : null],
-      );
-    }
-    return id;
-  });
+  const id = newId();
+  const subtotal = items.reduce((s, i) => s + i.unitPriceCents * Math.max(1, i.quantity), 0);
+  const stmts: Statement[] = [{
+    sql: `insert into quotes (id, customer_id, status, subtotal_cents, total_cents) values ($1, $2, 'requested', $3, $3)`,
+    params: [id, customerId, subtotal],
+  }];
+  for (const it of items) {
+    stmts.push({
+      sql: `insert into quote_items (quote_id, product_id, title_snapshot, wood_name, finish_name, size_label, quantity, unit_price_cents, configuration_json)
+            values ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+      params: [id, it.productId, it.title, it.woodName, it.finishName, it.sizeLabel, Math.max(1, it.quantity), it.unitPriceCents,
+        it.configuration ? JSON.stringify(it.configuration) : null],
+    });
+  }
+  await batch(stmts);
+  return id;
 }
 
 export async function listQuotesForCustomer(customerId: string): Promise<Quote[]> {
@@ -62,7 +59,7 @@ export async function getQuoteForCustomer(id: string, customerId: string): Promi
 
 export async function listQuotesForAdmin(): Promise<(Quote & { customer_name: string; item_count: number })[]> {
   return query(
-    `select q.*, pr.name as customer_name, (select count(*)::int from quote_items qi where qi.quote_id = q.id) as item_count
+    `select q.*, pr.name as customer_name, (select count(*) from quote_items qi where qi.quote_id = q.id) as item_count
        from quotes q join profiles pr on pr.id = q.customer_id
       order by case q.status when 'requested' then 0 else 1 end, q.created_at desc`,
   );
@@ -84,49 +81,50 @@ export async function getQuoteForAdmin(id: string): Promise<(Quote & { customer_
 }
 
 // Staff: set per-item prices, valid-until, notes, mark sent. prices keyed by quote_item id.
+// Reads and checks first, then writes everything in one batch; the final update
+// re-checks the status so a quote accepted in between is never re-priced.
 export async function priceAndSendQuote(quoteId: string, prices: Record<string, number>, validUntil: string | null, notes: string | null, paymentLinkUrl: string | null = null): Promise<void> {
-  await transaction(async (client) => {
-    const { rows: qrows } = await client.query('select status from quotes where id = $1 for update', [quoteId]);
-    if (!qrows[0] || !['requested', 'sent'].includes(qrows[0].status as string)) {
-      throw new Error('Quote is not in a priceable state');
-    }
-    let subtotal = 0;
-    const { rows: items } = await client.query('select id, quantity from quote_items where quote_id = $1', [quoteId]);
-    for (const it of items) {
-      const unit = prices[it.id as string];
-      if (unit === undefined || !Number.isFinite(unit) || unit < 0) throw new Error('Invalid price for a quote item');
-      subtotal += unit * (it.quantity as number);
-      await client.query('update quote_items set unit_price_cents = $2 where id = $1', [it.id, unit]);
-    }
-    await client.query(
-      `update quotes set subtotal_cents = $2, total_cents = $2, valid_until = $3, notes = $4, payment_link_url = $5, status = 'sent' where id = $1`,
-      [quoteId, subtotal, validUntil, notes, paymentLinkUrl],
-    );
+  const q = await queryOne<{ status: string }>('select status from quotes where id = $1', [quoteId]);
+  if (!q || !['requested', 'sent'].includes(q.status)) {
+    throw new Error('Quote is not in a priceable state');
+  }
+  const items = await query<{ id: string; quantity: number }>('select id, quantity from quote_items where quote_id = $1', [quoteId]);
+  let subtotal = 0;
+  const stmts: Statement[] = [];
+  for (const it of items) {
+    const unit = prices[it.id];
+    if (unit === undefined || !Number.isFinite(unit) || unit < 0) throw new Error('Invalid price for a quote item');
+    subtotal += unit * it.quantity;
+    stmts.push({ sql: 'update quote_items set unit_price_cents = $2 where id = $1', params: [it.id, unit] });
+  }
+  stmts.push({
+    sql: `update quotes set subtotal_cents = $2, total_cents = $2, valid_until = $3, notes = $4, payment_link_url = $5, status = 'sent'
+           where id = $1 and status in ('requested', 'sent')`,
+    params: [quoteId, subtotal, validUntil, notes, paymentLinkUrl],
   });
+  await batch(stmts);
 }
 
 // Customer accepts a sent quote -> creates a confirmed order (snapshotting items) and marks the quote accepted.
 export async function acceptQuote(quoteId: string, customerId: string): Promise<string | null> {
-  return transaction(async (client) => {
-    const { rows: qrows } = await client.query(
-      "select * from quotes where id = $1 and customer_id = $2 and status = 'sent' for update", [quoteId, customerId],
-    );
-    const quote = qrows[0];
-    if (!quote) return null;
-    const { rows: orows } = await client.query(
-      `insert into orders (customer_id, quote_id, status, subtotal_cents, total_cents)
-       values ($1, $2, 'confirmed', $3, $4) returning id`,
-      [customerId, quoteId, quote.subtotal_cents, quote.total_cents],
-    );
-    const orderId = orows[0].id as string;
-    await client.query(
-      `insert into order_items (order_id, product_id, title_snapshot, wood_name, finish_name, size_label, quantity, unit_price_cents, configuration_json)
-       select $1, product_id, title_snapshot, wood_name, finish_name, size_label, quantity, unit_price_cents, configuration_json
-         from quote_items where quote_id = $2`,
-      [orderId, quoteId],
-    );
-    await client.query("insert into order_status_history (order_id, status, note) values ($1, 'confirmed', 'Order confirmed from accepted quote')", [orderId]);
-    await client.query("update quotes set status = 'accepted' where id = $1", [quoteId]);
-    return orderId;
-  });
+  const quote = await queryOne<Quote>(
+    "select * from quotes where id = $1 and customer_id = $2 and status = 'sent'", [quoteId, customerId],
+  );
+  if (!quote) return null;
+  const orderId = newId();
+  await batch([
+    {
+      sql: `insert into orders (id, customer_id, quote_id, status, subtotal_cents, total_cents) values ($1, $2, $3, 'confirmed', $4, $5)`,
+      params: [orderId, customerId, quoteId, quote.subtotal_cents, quote.total_cents],
+    },
+    {
+      sql: `insert into order_items (order_id, product_id, title_snapshot, wood_name, finish_name, size_label, quantity, unit_price_cents, configuration_json)
+            select $1, product_id, title_snapshot, wood_name, finish_name, size_label, quantity, unit_price_cents, configuration_json
+              from quote_items where quote_id = $2`,
+      params: [orderId, quoteId],
+    },
+    { sql: "insert into order_status_history (order_id, status, note) values ($1, 'confirmed', 'Order confirmed from accepted quote')", params: [orderId] },
+    { sql: "update quotes set status = 'accepted' where id = $1 and status = 'sent'", params: [quoteId] },
+  ]);
+  return orderId;
 }

@@ -1,13 +1,11 @@
-import { describe, it, expect, afterAll } from 'vitest';
-import { closePool, query } from '@/lib/db';
+import { describe, it, expect } from 'vitest';
+import { query, run } from '@/lib/db';
 import { createProduct, updateProduct, getProductById, type ProductInput } from '@/lib/catalog';
 
-// Integration test against the local hw database (requires npm run db:reset, which
-// seeds 4 woods + 4 finishes). Proves a product and all its option relations
+// Integration test against an in-memory SQLite built from db/schema.sql and
+// db/seed.sql (4 woods + 4 finishes). Proves a product and all its option relations
 // round-trip through the real data layer, and that updateProduct replaces
 // relations wholesale. Cleans up the product it creates (cascade clears relations).
-afterAll(() => closePool());
-
 describe('catalog product round-trip (integration)', () => {
   it('creates a product with woods/finishes/sizes/images and reads them back, then updates', async () => {
     const woods = await query<{ id: string }>('select id from wood_species order by sort_order limit 2');
@@ -46,7 +44,7 @@ describe('catalog product round-trip (integration)', () => {
     expect(p2?.sizes.length).toBe(0);
     expect(p2?.images.length).toBe(0);
 
-    await query('delete from products where id = $1', [id]);
+    await run('delete from products where id = $1', [id]);
     expect(await getProductById(id)).toBeNull();
   });
 });

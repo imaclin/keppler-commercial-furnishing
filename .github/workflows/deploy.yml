@@ -5,8 +5,6 @@
 #                          as a comment on the PR, so a branch can be checked
 #                          before it is merged (nothing live changes)
 #
-# DATABASE_URL is needed at build time too: a few static pages read the site
-# settings (title, contact details) from the database while prerendering.
 name: Deploy
 
 on:
@@ -29,7 +27,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - name: Install
@@ -49,8 +47,6 @@ jobs:
 
       - name: Build for Workers
         run: npm run build:cf
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Deploy to production
         if: github.event_name == 'push'

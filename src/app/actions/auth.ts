@@ -2,7 +2,7 @@
 
 import { redirect } from 'next/navigation';
 import bcrypt from 'bcryptjs';
-import { transaction, queryOne } from '@/lib/db';
+import { queryOne, batch, newId, isUniqueViolation } from '@/lib/db';
 import { createSession } from '@/lib/auth';
 import type { User } from '@/lib/types';
 
@@ -15,27 +15,19 @@ export async function registerAction(_prev: ActionState, formData: FormData): Pr
   if (!email || !password || !name) return { error: 'All fields are required.' };
   if (password.length < 8) return { error: 'Password must be at least 8 characters.' };
 
-  let userId = '';
+  const userId = newId();
   try {
-    userId = await transaction(async (client) => {
-      const { rows: existing } = await client.query('select 1 from users where email = $1', [email]);
-      if (existing.length > 0) throw new Error('email_taken');
-      const hash = await bcrypt.hash(password, 10);
-      const { rows } = await client.query(
-        'insert into users (email, password_hash) values ($1, $2) returning id', [email, hash],
-      );
-      const uid = rows[0].id as string;
-      await client.query(
-        "insert into profiles (id, email, name, role) values ($1, $2, $3, 'customer')",
-        [uid, email, name],
-      );
-      return uid;
-    });
+    const existing = await queryOne('select 1 as one from users where email = $1', [email]);
+    if (existing) throw new Error('email_taken');
+    const hash = await bcrypt.hash(password, 10);
+    // Both rows or neither. users.email is unique, so a simultaneous sign-up
+    // with the same address fails here instead of making two accounts.
+    await batch([
+      { sql: 'insert into users (id, email, password_hash) values ($1, $2, $3)', params: [userId, email, hash] },
+      { sql: "insert into profiles (id, email, name, role) values ($1, $2, $3, 'customer')", params: [userId, email, name] },
+    ]);
   } catch (e) {
-    if (e instanceof Error && e.message === 'email_taken') {
-      return { error: 'An account with that email already exists.' };
-    }
-    if (typeof e === 'object' && e !== null && 'code' in e && (e as { code?: string }).code === '23505') {
+    if ((e instanceof Error && e.message === 'email_taken') || isUniqueViolation(e)) {
       return { error: 'An account with that email already exists.' };
     }
     return { error: 'Could not create your account. Please try again.' };

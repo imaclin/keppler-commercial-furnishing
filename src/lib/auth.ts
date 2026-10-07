@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { createHash } from 'crypto';
-import { query, queryOne } from '@/lib/db';
+import { queryOne, run, NOW } from '@/lib/db';
 import type { Profile } from '@/lib/types';
 
 const COOKIE = 'hw_session';
@@ -20,7 +20,7 @@ function hashToken(token: string): string {
 export async function createSession(userId: string): Promise<void> {
   const token = randomToken();
   const expires = new Date(Date.now() + SESSION_DAYS * 86_400_000);
-  await query('insert into sessions (token, user_id, expires_at) values ($1, $2, $3)', [
+  await run('insert into sessions (token, user_id, expires_at) values ($1, $2, $3)', [
     hashToken(token), userId, expires.toISOString(),
   ]);
   const store = await cookies();
@@ -34,7 +34,7 @@ export async function destroySession(): Promise<void> {
   const store = await cookies();
   const token = store.get(COOKIE)?.value;
   if (token) {
-    await query('delete from sessions where token = $1', [hashToken(token)]);
+    await run('delete from sessions where token = $1', [hashToken(token)]);
     store.delete(COOKIE);
   }
 }
@@ -45,7 +45,7 @@ export async function getProfile(): Promise<Profile | null> {
   if (!token) return null;
   return queryOne<Profile>(
     `select p.* from sessions s join profiles p on p.id = s.user_id
-      where s.token = $1 and s.expires_at > now()`,
+      where s.token = $1 and s.expires_at > ${NOW}`,
     [hashToken(token)],
   );
 }

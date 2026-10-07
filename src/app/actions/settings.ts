@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
 import { requireStaff } from '@/lib/auth';
-import { query, queryOne } from '@/lib/db';
+import { run, queryOne } from '@/lib/db';
 import { updateSiteSettings, type SiteSettingsInput } from '@/lib/settings';
 import { createStaffMember, setStaffRole, countAdmins } from '@/lib/staff';
 
@@ -24,7 +24,7 @@ export async function updateAccountNameAction(name: string): Promise<Result> {
   const trimmed = name.trim();
   if (!trimmed) return { error: 'Name is required.' };
   if (trimmed.length > 80) return { error: 'Name must be 80 characters or fewer.' };
-  await query('update profiles set name = $2 where id = $1', [profile.id, trimmed]);
+  await run('update profiles set name = $2 where id = $1', [profile.id, trimmed]);
   revalidatePath('/admin', 'layout');
   return { ok: true };
 }
@@ -37,8 +37,8 @@ export async function changeEmailAction(currentPassword: string, newEmail: strin
   if (!(await verifyPassword(profile.id, currentPassword))) return { error: 'Current password is incorrect.' };
   const existing = await queryOne<{ id: string }>('select id from users where email = $1', [email]);
   if (existing) return { error: 'Another account already uses that email.' };
-  await query('update users set email = $2 where id = $1', [profile.id, email]);
-  await query('update profiles set email = $2 where id = $1', [profile.id, email]);
+  await run('update users set email = $2 where id = $1', [profile.id, email]);
+  await run('update profiles set email = $2 where id = $1', [profile.id, email]);
   revalidatePath('/admin', 'layout');
   return { ok: true };
 }
@@ -48,7 +48,7 @@ export async function changePasswordAction(currentPassword: string, newPassword:
   if (newPassword.length < 8) return { error: 'New password must be at least 8 characters.' };
   if (!(await verifyPassword(profile.id, currentPassword))) return { error: 'Current password is incorrect.' };
   const hash = await bcrypt.hash(newPassword, 10);
-  await query('update users set password_hash = $2 where id = $1', [profile.id, hash]);
+  await run('update users set password_hash = $2 where id = $1', [profile.id, hash]);
   return { ok: true };
 }
 
