@@ -3,7 +3,7 @@
 Online catalog and quoting platform for Keppler Commercial Furnishing (Grand
 Slabs, LLC): handcrafted American solid-wood chairs, made to order.
 
-Built with Next.js 16 (App Router, React 19), Tailwind, shadcn/ui, and Postgres
+Built with Next.js 16 (App Router, React 19), Tailwind, shadcn/ui, and Cloudflare D1 (SQLite)
 accessed directly through the `pg` driver. Authentication is a custom
 email/password session scheme, not a third-party provider.
 

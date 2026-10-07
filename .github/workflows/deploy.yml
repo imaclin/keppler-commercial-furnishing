@@ -38,7 +38,7 @@ jobs:
       - name: Allow build-tool install scripts
         run: |
           if npm install-scripts --help >/dev/null 2>&1; then
-            npm install-scripts approve esbuild workerd fsevents
+            npm install-scripts approve esbuild workerd
           fi
           npm rebuild esbuild workerd
 
