@@ -12,6 +12,9 @@
     "binding": "ASSETS"
   },
   "observability": { "enabled": true },
+  // Hyperdrive keeps a warm pool of Postgres connections at the edge; each
+  // request borrows one instead of doing its own TLS handshake with Neon.
+  "hyperdrive": [{ "binding": "HYPERDRIVE", "id": "51001a96c8d148f7bf212167cf438922", "localConnectionString": "postgresql://expando@localhost:5432/gs_chairs" }],
   "vars": {
     "NEXT_PUBLIC_MEDIA_BASE_URL": "https://poetausercontent.com"
   }
