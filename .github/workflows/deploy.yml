@@ -35,8 +35,14 @@ jobs:
       - name: Install
         run: npm ci
 
+      # npm 11 blocks postinstall scripts until approved; older npm (as bundled
+      # with Node 22) runs them anyway and has no such command.
       - name: Allow build-tool install scripts
-        run: npm install-scripts approve esbuild workerd fsevents && npm rebuild esbuild workerd
+        run: |
+          if npm install-scripts --help >/dev/null 2>&1; then
+            npm install-scripts approve esbuild workerd fsevents
+          fi
+          npm rebuild esbuild workerd
 
       - name: Test
         run: npm run test -- --exclude test/catalog.integration.test.ts
