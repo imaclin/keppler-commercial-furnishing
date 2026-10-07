@@ -56,8 +56,8 @@ Copy `.env.example` to `.env.local`.
 | `RESEND_API_KEY` | no | Enables outbound email. Unset means email is a no-op. |
 
 `GS_EMAIL_FROM` is the pre-rebrand name and is still read as a fallback so email
-does not break if only one of the two is set. Neither is currently set in
-Vercel, so production email is a no-op today.
+does not break if only one of the two is set. Neither is set on the Worker, so
+production email is a no-op today.
 
 Keep `.env.local` pointed at your local database. Pointing it at production
 means local development writes to live client data.
@@ -74,15 +74,24 @@ in sync with the local database name.
 
 ## Deployment
 
-Hosted on Vercel (project `kepplercf`) with Postgres on Neon, provisioned as a
-Vercel Marketplace resource. The Neon integration injects `DATABASE_URL` into all
-three Vercel environments automatically.
+Hosted on Cloudflare Workers (Worker `kepplercf`, built with `@opennextjs/cloudflare`;
+config in `wrangler.jsonc`) with Postgres on Neon reached through Hyperdrive. Files
+live in two R2 buckets: `keppler-media` (public, served by the app at `/media/<key>`)
+and `keppler-private` (customer attachments, served at `/uploads/<name>` to signed-in
+users only). The Worker reaches both through bindings, so no storage credentials exist.
 
-Pushing to `main` deploys to production. To deploy manually instead:
+GitHub Actions (`.github/workflows/deploy.yml`) deploys `main` to production and gives
+every pull request a preview URL (`https://pr-<n>-kepplercf.<subdomain>.workers.dev`),
+posted as a comment on the PR. The workflow needs the repo secrets
+`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` and `DATABASE_URL` (the build
+prerenders a few pages that read site settings). To deploy manually instead:
 
 ```bash
-vercel deploy --prod
+npm run deploy:cf
 ```
+
+`npm run preview:cf` runs the built Worker locally (`.dev.vars` holds `DATABASE_URL`).
+Next is pinned to 16.3.x until the Cloudflare adapter supports 16.4.
 
 Migrations do not run automatically on deploy. Apply them to production
 explicitly, using the unpooled connection string:
