@@ -1,6 +1,6 @@
 import { writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
-import { mediaKey, putPublicMedia, r2Enabled } from '@/lib/r2';
+import { mediaKey, putPublicMedia, putPrivateFile, r2Enabled } from '@/lib/r2';
 
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads');
 const ALLOWED = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -26,29 +26,35 @@ const FILE_EXT: Record<string, string> = {
 
 export type SavedFile = { url: string; name: string; type: string; size: number };
 
-// Persist any allowed attachment to public/uploads and return its metadata.
-// Stored under a random name; the original filename is preserved for download.
+// Persist a message attachment and return its metadata. Stored under a random
+// name; the original filename is kept for download. The URL is always
+// /uploads/<name>, which checks the session before serving the file.
 //
-// Deliberately NOT sent to R2: message attachments are private customer files,
-// and the R2 bucket is public. On Vercel this write does not persist, so
-// attachments need a private store (signed URLs) before they work in production.
+// On Workers the bytes go to the PRIVATE bucket. In local development they are
+// written to public/uploads, where the same route reads them back.
 export async function saveUploadedFile(file: File): Promise<SavedFile | { error: string }> {
   const ext = FILE_EXT[file.type];
   if (!ext) return { error: 'Unsupported file type. Upload an image, PDF, or document.' };
   if (file.size > 15 * 1024 * 1024) return { error: 'Files must be under 15 MB.' };
   const bytes = Buffer.from(await file.arrayBuffer());
   const stored = `${crypto.randomUUID()}.${ext}`;
-  await mkdir(UPLOAD_DIR, { recursive: true });
-  await writeFile(path.join(UPLOAD_DIR, stored), bytes);
   const cleanName = (file.name || `file.${ext}`).replace(/[^\w.\- ]/g, '_').slice(0, 120);
+  try {
+    if (!(await putPrivateFile(stored, bytes, file.type, cleanName))) {
+      await mkdir(UPLOAD_DIR, { recursive: true });
+      await writeFile(path.join(UPLOAD_DIR, stored), bytes);
+    }
+  } catch (err) {
+    console.error('saveUploadedFile: store failed', err);
+    return { error: 'The file could not be saved. Please try again.' };
+  }
   return { url: `/uploads/${stored}`, name: cleanName, type: file.type, size: file.size };
 }
 
 // Admin-uploaded public images (product photos, collection heroes, the social
-// share image). In production they go to R2 and come back as a CDN URL, because
-// Vercel's filesystem does not keep files between requests or deploys. Without
-// the R2 env vars (local development) they are written to public/uploads.
-// Callers only depend on the returned URL string.
+// share image). They go to the public bucket and come back as the URL they are
+// served from. Without any storage configured (local development) they are
+// written to public/uploads. Callers only depend on the returned URL string.
 export async function saveUploadedImage(file: File): Promise<{ url: string } | { error: string }> {
   if (!ALLOWED.has(file.type)) return { error: 'Only JPEG, PNG, or WebP images are allowed.' };
   if (file.size > 8 * 1024 * 1024) return { error: 'Images must be under 8 MB.' };
@@ -56,11 +62,11 @@ export async function saveUploadedImage(file: File): Promise<{ url: string } | {
   if (!magicMatches(file.type, bytes)) return { error: 'File content does not match its type.' };
   const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
   const name = `${crypto.randomUUID()}.${ext}`;
-  if (r2Enabled()) {
+  if (await r2Enabled()) {
     try {
       return { url: await putPublicMedia(mediaKey('uploads', name), bytes, file.type) };
     } catch (err) {
-      console.error('saveUploadedImage: R2 upload failed', err);
+      console.error('saveUploadedImage: upload failed', err);
       return { error: 'The image could not be saved. Please try again.' };
     }
   }
